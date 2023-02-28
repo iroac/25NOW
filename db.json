@@ -1,0 +1,13 @@
+{
+    "todogroup": [
+      { "Title": "Work",
+        "Itens": ["Finish the app", "Update Linkedin", "Watch some video about something 12345567"]
+    },
+      { "Title": "Home",
+        "Itens": ["Put the cup downstairs", "Clean up Bedroom", "Put more water on the bottle"]
+    },
+      { "Title": "Random",
+        "Itens": ["Study on Dualingo", "Read the book", "Play some Battlefield at lunch"]
+    }
+    ]
+  }
