@@ -1,13 +1,36 @@
 {
-    "todogroup": [
-      { "Title": "Work",
-        "Itens": ["Finish the app", "Update Linkedin", "Watch some video about something 12345567"]
+  "todogroup": [
+    {
+      "id": 1,
+      "Title": "Work",
+      "Itens": [
+        "Put the cup downstairs",
+        "Clean up Bedroom",
+        "Put more water on the bottle",
+        "Do the edit functional",
+        "Just more one"
+      ]
     },
-      { "Title": "Home",
-        "Itens": ["Put the cup downstairs", "Clean up Bedroom", "Put more water on the bottle"]
+    {
+      "id": 2,
+      "Title": "Home",
+      "Itens": [
+        "Study on Dualingo",
+        "Read the book",
+        "Play some Battlefield at lunch",
+        "make a coofee",
+        "make a tea"
+      ]
     },
-      { "Title": "Random",
-        "Itens": ["Study on Dualingo", "Read the book", "Play some Battlefield at lunch"]
+    {
+      "id": 3,
+      "Title": "Random",
+      "Itens": [
+        "Study on Dualingo",
+        "Read the book",
+        "Play some Battlefield at lunch",
+        "New Item"
+      ]
     }
-    ]
-  }
+  ]
+}
