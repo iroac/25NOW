@@ -7,9 +7,38 @@ import EditInput from "./components/EditInput";
 function App() {
   const [todogrup, setTodoGrup] = useState([])
   const [activeIndex, setActiveIndex] = useState('')
+  const [valueEditInput, setValueEditInput] = useState('')
   const [activeIndexList, setActiveIndexList] = useState('')
   const [clicked, setClicked] = useState(false)
   const [listclicked, setListClicked] = useState(false)
+  const [editClicked, setEditClicked] = useState(false)
+
+
+  // Handle to show the Input field and set the value as the currently item name. it just can be accomplished with the defaultvalue set as the item on the input field
+  const handleEditInput = () => {
+    setEditClicked(true)
+  }
+
+
+  // Hey boy, what a jorney, it was intense but rewarding, the first config was made the editClicked status so we can change between the input and the h2 the represents each item
+  // Then I styled currectly so it appears to be just a plain text, was a pain but I found out that we need the valuedefault to put the item as the inicial value
+  // after I passed the same thing and then discovered the we need the autoFocus to put the | on the end when click no need to the user select the text and find where they want to start editing
+  // Then on submit is not available on the input field so I embedded it with a form so onSubmit calls the handleUpdateItem and from there we can make everything happen
+  // Also we assign the currently value of the input with a state so we can acess it with that function.
+  // handleUpdateItem has 3 props (event, itemIndex, listIndex ) with this is possible to assign the right modification, I won't explain this, just look for your self to see the steps
+  const handleUpdateItem = (e, index, listindex) => {
+    e.preventDefault()
+    setEditClicked(false)
+    const newState = [...todogrup]
+    newState[listindex].Itens.splice(index, 1, valueEditInput)
+
+    const listId = newState[listindex].id
+
+    setTodoGrup(newState)
+
+    const newList = { ...todogrup[listindex] }
+    axios.put(`http://localhost:3000/todogroup/${listId}`, newList)
+  }
 
 
   // A spend some time trying to figure why after create the put request to addItem was not working and finally found out that was the order of this function
@@ -62,6 +91,8 @@ function App() {
     await axios.put(`http://localhost:3000/todogroup/${listid}`, newItem)
   }
 
+
+  // Set the currently clicked index and show set the listclicked to true so shows the icon
   const handleListDeleteButton = (index) => {
     setListClicked(!listclicked)
     setActiveIndexList(index)
@@ -81,6 +112,7 @@ function App() {
   const handleClick = (index) => {
     setActiveIndex(index)
     setClicked(true)
+    setEditClicked(false)
   }
 
   // A function that goes to Editinput as a props so when click on add we change to AddInput and unselect any active item
@@ -95,8 +127,16 @@ function App() {
     let items = data.Itens
     const rendereditems = items.map((item, i) => {
       const twoindex = `${listindex}, ${i}`
-      return <h2 onClick={() => handleClick(twoindex)} key={i} className={`text-lg ${twoindex === activeIndex ? 'text-red-500' : ''}`}>{item}</h2>
-    })
+      let content;
+      if (editClicked & twoindex === activeIndex) {
+        content = <form key={i} onSubmit={(e) => handleUpdateItem(e, i, listindex)}> <input onFocus={() => setValueEditInput(item)} className="text-lg focus:outline-0 min-w-full text-red-500" autoFocus defaultValue={item} onChange={(e) => { setValueEditInput(e.target.value) }}  ></input> </form>
+      }
+      else {
+        content = <h2 onClick={() => handleClick(twoindex)} key={i} className={`text-lg ${twoindex === activeIndex ? 'text-red-500' : ''}`}>{item}</h2>
+      }
+      return content
+    }
+    )
 
 
     return (<div key={data.Title} className="text-left px-10 ">
@@ -127,7 +167,8 @@ function App() {
       <h1 className="text-3xl text-red-600 font-bold underline">Let's start</h1>
     </div>
     <div className="flex flex-row justify-center pt-60">{renderedLists}</div>
-    {clicked ? <EditInput deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput addlist={addNewList} add={addItem} options={optionsList} />}
+    {editClicked ? <div></div> : <div> {clicked ? <EditInput onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput addlist={addNewList} add={addItem} options={optionsList} />} </div>}
+    {/* {clicked ? <EditInput onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput addlist={addNewList} add={addItem} options={optionsList} />} */}
   </div>
 }
 

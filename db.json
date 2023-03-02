@@ -12,9 +12,11 @@
       "id": 2,
       "Title": "Home",
       "Itens": [
-        "Study on Dualingo",
-        "Read the book",
-        "Play some Battlefield at lunch"
+        "Study English",
+        "Read the books",
+        "",
+        "",
+        "Edit need"
       ]
     },
     {
@@ -23,9 +25,7 @@
       "Itens": [
         "Study on Dualingo",
         "Read the book",
-        "Play some Battlefield at lunch",
-        "New Item",
-        "Another one"
+        "Edit new3"
       ]
     }
   ]
