@@ -2,10 +2,11 @@
 import { useEffect, useState } from 'react'
 import Select from 'react-select'
 
-function AddInput({ options, add }) {
+function AddInput({ options, add, addlist }) {
     const [option, setOption] = useState([])
     const [addList, setAddList] = useState(false)
     const [addInput, setAddInput] = useState('')
+    const [addNewList, setAddNewList] = useState('')
     const [selectedOption, setSelectedOption] = useState(null);
 
     const handleAdd = () => {
@@ -15,7 +16,13 @@ function AddInput({ options, add }) {
     }
 
     const showInput = () => {
-        setAddList(!addList)
+        if (addNewList === '') {
+            setAddList(!addList)
+        } else {
+            addlist(addNewList)
+            setAddNewList('')
+            setAddList(!addList)
+        }
     }
 
     useEffect(() => {
@@ -44,7 +51,7 @@ function AddInput({ options, add }) {
             <input onChange={(e) => { setAddInput(e.target.value) }} value={addInput} className=" h-8 p-auto focus:outline-0 "></input>
             <Select onChange={(option) => { setSelectedOption(option) }} value={selectedOption} styles={customStyles} options={option} placeholder="choose a group"></Select>
             <i className="ri-add-circle-fill text-5xl text-regal-white" onClick={handleAdd}></i>
-            {addList ? <input className=" h-8 focus:outline-0"></input> : ''}
+            {addList ? <input onChange={(e) => { setAddNewList(e.target.value) }} value={addNewList} className=" h-8 focus:outline-0"></input> : ''}
             <i className="ri-folder-add-fill text-5xl text-regal-white" onClick={showInput}></i>
         </div>
     </div>

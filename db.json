@@ -5,10 +5,7 @@
       "Title": "Work",
       "Itens": [
         "Put the cup downstairs",
-        "Clean up Bedroom",
-        "Put more water on the bottle",
-        "Do the edit functional",
-        "Just more one"
+        "Clean up Bedroom"
       ]
     },
     {
@@ -17,9 +14,7 @@
       "Itens": [
         "Study on Dualingo",
         "Read the book",
-        "Play some Battlefield at lunch",
-        "make a coofee",
-        "make a tea"
+        "Play some Battlefield at lunch"
       ]
     },
     {
@@ -29,7 +24,8 @@
         "Study on Dualingo",
         "Read the book",
         "Play some Battlefield at lunch",
-        "New Item"
+        "New Item",
+        "Another one"
       ]
     }
   ]
