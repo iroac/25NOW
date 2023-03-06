@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from 'axios'
 import AddInput from "./components/AddInput";
 import EditInput from "./components/EditInput";
+import Time from "./components/Time";
 
 
 function App() {
@@ -9,14 +10,65 @@ function App() {
   const [activeIndex, setActiveIndex] = useState('')
   const [valueEditInput, setValueEditInput] = useState('')
   const [activeIndexList, setActiveIndexList] = useState('')
+  const [valueEditList, setValueEditList] = useState('')
+  const [restTime, setRestTime] = useState(false)
+
+  // Boolean states
   const [clicked, setClicked] = useState(false)
   const [listclicked, setListClicked] = useState(false)
   const [editClicked, setEditClicked] = useState(false)
+  const [editClikedList, setEditClickedList] = useState(false)
+  const [updateArchived, setUpdateArchived] = useState(false)
 
+
+  const handleTimeFive = (TimeFive) => {
+    setRestTime(TimeFive)
+  }
+
+  const handleUpdateArchived = () => {
+    setUpdateArchived(!updateArchived)
+  }
 
   // Handle to show the Input field and set the value as the currently item name. it just can be accomplished with the defaultvalue set as the item on the input field
   const handleEditInput = () => {
     setEditClicked(true)
+  }
+
+  // Update the ListName
+  const handleListNameUpdate = (e, listindex) => {
+    e.preventDefault()
+    setEditClickedList(false)
+    const newState = [...todogrup]
+    newState[listindex] = { ...newState[listindex], Title: valueEditList }
+
+    const newList = newState[listindex]
+
+    setTodoGrup(newState)
+    axios.put(`http://localhost:3000/todogroup/${newList.id}`, newList)
+  }
+
+  // Make any input width at the same size of the content
+  const handleWidthInput = (e) => {
+    const input = e.target;
+    input.style.width = input.value.length + "ch"
+  }
+
+  // Handle to make the set the valuedefaul when click and make the defaultValue width at the same size of the input
+  const handleFocus = (e, Title) => {
+    const input = e.target;
+    input.style.width = input.value.length + "ch"
+  }
+
+  const handleArchive = (listIndex) => {
+    const newState = [...todogrup]
+    newState[listIndex].isArchive = true
+
+    const listid = newState[listIndex].id
+
+    setTodoGrup(newState)
+
+    const newList = { ...todogrup[listIndex] }
+    axios.put(`http://localhost:3000/todogroup/${listid}`, newList)
   }
 
 
@@ -44,7 +96,7 @@ function App() {
   // A spend some time trying to figure why after create the put request to addItem was not working and finally found out that was the order of this function
   // A tried a lot of stuff but It's always better looking in the function order first 
   const addNewList = async (listname) => {
-    const newList = { Title: listname, Itens: [] }
+    const newList = { Title: listname, Itens: [], isArchive: false }
     const res = await axios.post('http://localhost:3000/todogroup/', newList)
     const newGroup = [...todogrup, res.data]
     setTodoGrup(newGroup)
@@ -93,12 +145,14 @@ function App() {
 
 
   // Set the currently clicked index and show set the listclicked to true so shows the icon
-  const handleListDeleteButton = (index) => {
+  const handleListDeleteButton = (index, e) => {
     setListClicked(!listclicked)
     setActiveIndexList(index)
+    setEditClickedList(false)
+    setValueEditList(e.target.innerText)
   }
 
-
+  // Handle the List Delete using a filter method
   const handleListDelete = (index) => {
     const newList = todogrup.filter((list) => list.id !== index)
     setTodoGrup(newList)
@@ -109,43 +163,49 @@ function App() {
 
   // Set the current item index that was clicked, with the index list and index item so just active the item to red
   // Set the cliked state so the menus can change between then
-  const handleClick = (index) => {
+  const handleClick = (index, e) => {
     setActiveIndex(index)
     setClicked(true)
     setEditClicked(false)
+    setListClicked(false)
+    setValueEditInput(e.target.innerText)
   }
 
   // A function that goes to Editinput as a props so when click on add we change to AddInput and unselect any active item
   const handleMenuClick = () => {
     setClicked(false)
     setActiveIndex('')
+    setValueEditInput('')
   }
 
   // Maps to handle with the fetch to display currectly 
   const renderedLists = todogrup.map((data, listindex) => {
+    if (!data.isArchive) {
+      let items = data.Itens
+      const rendereditems = items.map((item, i) => {
+        const twoindex = `${listindex}, ${i}`
+        let content;
+        if (editClicked & twoindex === activeIndex) {
+          content = <form key={i} onSubmit={(e) => handleUpdateItem(e, i, listindex)}> <input onInput={handleWidthInput} onFocus={(e) => handleFocus(e)} className={`text-lg focus:outline-0 ${restTime ? 'text-green-600' : 'text-red-600'}`} style={{ width: "auto" }} autoFocus defaultValue={item} onChange={(e) => { setValueEditInput(e.target.value) }}  ></input> </form>
+        }
+        else {
+          content = <h2 onClick={(e) => handleClick(twoindex, e)} key={i} className={`text-lg ${twoindex === activeIndex ? restTime ? 'text-green-600' : 'text-red-600' : ''}`}>{item}</h2>
+        }
+        return content
+      }
+      )
 
-    let items = data.Itens
-    const rendereditems = items.map((item, i) => {
-      const twoindex = `${listindex}, ${i}`
-      let content;
-      if (editClicked & twoindex === activeIndex) {
-        content = <form key={i} onSubmit={(e) => handleUpdateItem(e, i, listindex)}> <input onFocus={() => setValueEditInput(item)} className="text-lg focus:outline-0 min-w-full text-red-500" autoFocus defaultValue={item} onChange={(e) => { setValueEditInput(e.target.value) }}  ></input> </form>
-      }
-      else {
-        content = <h2 onClick={() => handleClick(twoindex)} key={i} className={`text-lg ${twoindex === activeIndex ? 'text-red-500' : ''}`}>{item}</h2>
-      }
-      return content
+
+      return (<div key={data.Title} className="text-left px-10 ">
+        <div className="flex flex-row">
+          {editClikedList & listindex === activeIndexList ? <form key={listindex} onSubmit={(e) => handleListNameUpdate(e, listindex)} > <input onInput={handleWidthInput} className={`text-3xl focus:outline-0   ${restTime ? 'text-green-600' : 'text-red-600'}`} style={{ width: "auto" }} onFocus={(e) => handleFocus(e)} defaultValue={data.Title} autoFocus onChange={(e) => { setValueEditList(e.target.value) }} /> </form> : <h1 onClick={(e) => handleListDeleteButton(listindex, e)} className={`text-3xl  ${restTime ? 'text-green-600' : 'text-red-600'}`}>{data.Title}</h1>}
+          {listclicked & listindex === activeIndexList & !editClikedList ? <div> <i className={`ri-edit-2-line ml-1 text-2xl   ${restTime ? 'text-green-600' : 'text-red-600'} `} onClick={() => setEditClickedList(!editClikedList)} ></i> <i onClick={() => handleArchive(listindex)} className={`ri-inbox-archive-line ml-1 text-2xl pl-1  ${restTime ? 'text-green-600' : 'text-red-600'} `}></i>   <i onClick={() => handleListDelete(data.id)} className={`ri-delete-bin-2-line ml-2 ${restTime ? 'text-green-600' : 'text-red-600'}  text-2xl`} > </i> </div> : ''} </div>
+        {rendereditems}
+      </div>
+      )
+    } else {
+      return ''
     }
-    )
-
-
-    return (<div key={data.Title} className="text-left px-10 ">
-      <div className="flex flex-row">
-        <h1 onClick={() => handleListDeleteButton(listindex)} className="text-3xl text-red-600">{data.Title}</h1>
-        {listclicked & listindex === activeIndexList ? <i onClick={() => handleListDelete(data.id)} className="ri-delete-bin-2-line text-red-600 text-2xl"></i> : ''} </div>
-      {rendereditems}
-    </div>
-    )
   })
 
   // A map that take the Title to put on the selection as options at AddInput
@@ -160,15 +220,12 @@ function App() {
       setTodoGrup(data.data)
     }
     fetchData()
-  }, [])
+  }, [updateArchived])
 
   return <div>
-    <div className="flex flex-col text-center justify-center">
-      <h1 className="text-3xl text-red-600 font-bold underline">Let's start</h1>
-    </div>
-    <div className="flex flex-row justify-center pt-60">{renderedLists}</div>
-    {editClicked ? <div></div> : <div> {clicked ? <EditInput onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput addlist={addNewList} add={addItem} options={optionsList} />} </div>}
-    {/* {clicked ? <EditInput onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput addlist={addNewList} add={addItem} options={optionsList} />} */}
+    <Time itemClicked={valueEditInput} funcTimeFive={handleTimeFive} />
+    <div className="flex flex-row justify-center pt-16">{renderedLists}</div>
+    {editClicked ? <div></div> : <div> {clicked ? <EditInput restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}
   </div>
 }
 

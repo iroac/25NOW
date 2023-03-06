@@ -1,32 +1,29 @@
 {
   "todogroup": [
     {
-      "id": 1,
-      "Title": "Work",
+      "Title": "Trabalho",
       "Itens": [
-        "Put the cup downstairs",
+        "Put the cup on the kitchen",
         "Clean up Bedroom"
-      ]
+      ],
+      "isArchive": false,
+      "id": 1
     },
     {
-      "id": 2,
       "Title": "Home",
       "Itens": [
         "Study English",
         "Read the books",
-        "",
-        "",
         "Edit need"
-      ]
+      ],
+      "isArchive": false,
+      "id": 2
     },
     {
-      "id": 3,
-      "Title": "Random",
-      "Itens": [
-        "Study on Dualingo",
-        "Read the book",
-        "Edit new3"
-      ]
+      "Title": "Code",
+      "Itens": [],
+      "isArchive": true,
+      "id": 5
     }
   ]
 }
