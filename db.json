@@ -13,8 +13,7 @@
       "Title": "Home",
       "Itens": [
         "Study English",
-        "Read the books",
-        "Edit need"
+        "Read the books"
       ],
       "isArchive": false,
       "id": 2
@@ -22,7 +21,7 @@
     {
       "Title": "Code",
       "Itens": [],
-      "isArchive": true,
+      "isArchive": false,
       "id": 5
     }
   ]

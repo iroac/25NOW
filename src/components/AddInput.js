@@ -31,8 +31,12 @@ function AddInput({ options, add, addlist, restTime, onArchivedUpdate }) {
         }
     }
 
+    const filteroptions = options.filter((option) => {
+        return option.value !== undefined
+    })
+
     useEffect(() => {
-        setOption(options)
+        setOption(filteroptions)
     }, [options])
 
     const customStyles = {

@@ -141,6 +141,7 @@ function App() {
 
     const newItem = { ...todogrup[listIndex] }
     await axios.put(`http://localhost:3000/todogroup/${listid}`, newItem)
+    setValueEditInput('')
   }
 
 
@@ -210,7 +211,12 @@ function App() {
 
   // A map that take the Title to put on the selection as options at AddInput
   const optionsList = todogrup.map((todo) => {
-    return { value: todo.id, label: todo.Title }
+    if (!todo.isArchive) {
+      return { value: todo.id, label: todo.Title }
+    } else {
+      return { value: undefined, label: undefined }
+    }
+
   })
 
   // A fetch to take all list and itens from the database
@@ -219,6 +225,7 @@ function App() {
       const data = await axios.get('http://localhost:3000/todogroup')
       setTodoGrup(data.data)
     }
+
     fetchData()
   }, [updateArchived])
 
