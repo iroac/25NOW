@@ -3,8 +3,7 @@
     {
       "Title": "Trabalho",
       "Itens": [
-        "Put the cup on the kitchen",
-        "Clean up Bedroom"
+        "Put the cup on the kitchen"
       ],
       "isArchive": false,
       "id": 1
@@ -20,9 +19,20 @@
     },
     {
       "Title": "Code",
-      "Itens": [],
+      "Itens": [
+        "Novo item"
+      ],
       "isArchive": false,
       "id": 5
+    }
+  ],
+  "doneitems": [
+    {
+      "data": "7 March 2023",
+      "items": [
+        "Clean up Bedroom"
+      ],
+      "id": 1
     }
   ]
 }

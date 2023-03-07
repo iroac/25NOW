@@ -7,6 +7,7 @@ import Time from "./components/Time";
 
 function App() {
   const [todogrup, setTodoGrup] = useState([])
+  const [doneItens, setDoneItens] = useState([])
   const [activeIndex, setActiveIndex] = useState('')
   const [valueEditInput, setValueEditInput] = useState('')
   const [activeIndexList, setActiveIndexList] = useState('')
@@ -23,6 +24,65 @@ function App() {
 
   const handleTimeFive = (TimeFive) => {
     setRestTime(TimeFive)
+  }
+
+
+  const handleDone = async () => {
+    // Currently item select
+    const itemIndex = +activeIndex[3]
+    const listIndex = +activeIndex[0]
+
+    // Currently date sum
+    const date = new Date()
+    let day = date.getDate()
+    let month = date.toLocaleString('default', { month: 'long' });
+    let year = date.getFullYear()
+    const currentdate = `${day} ${month} ${year}`
+
+
+    // Item Select
+    const newState = [...todogrup]
+    const itemSelect = newState[listIndex].Itens[itemIndex]
+
+
+    // doneItens Copy
+    const newDoneItens = [...doneItens]
+    const data = newDoneItens.map(done => done.data)
+    const containsdata = data.some(item => item === currentdate)
+    let content;
+
+
+    if (containsdata) {
+      newDoneItens.map((done, doneindex) => {
+        if (done.data === currentdate) {
+          done.items.push(itemSelect)
+          content = [...newDoneItens]
+          setDoneItens(content)
+          const newList = content[doneindex]
+          axios.put(`http://localhost:3000/doneitems/${done.id}`, newList)
+        }
+      })
+    } else {
+      const newitem = { data: currentdate, items: [itemSelect] }
+      content = [...newDoneItens, newitem]
+      setDoneItens(content)
+      await axios.post(`http://localhost:3000/doneitems/`, newitem)
+    }
+
+
+    // Delete Logic
+    const updatedGroup = [...todogrup]
+    updatedGroup[listIndex].Itens.splice(itemIndex, 1)
+
+    const listid = updatedGroup[listIndex].id
+
+    setTodoGrup(updatedGroup)
+
+    const newItem = { ...todogrup[listIndex] }
+    axios.put(`http://localhost:3000/todogroup/${listid}`, newItem)
+    setValueEditInput('')
+
+
   }
 
   const handleUpdateArchived = () => {
@@ -142,6 +202,7 @@ function App() {
     const newItem = { ...todogrup[listIndex] }
     await axios.put(`http://localhost:3000/todogroup/${listid}`, newItem)
     setValueEditInput('')
+    setClicked(false)
   }
 
 
@@ -197,7 +258,7 @@ function App() {
       )
 
 
-      return (<div key={data.Title} className="text-left px-10 ">
+      return (<div key={data.Title} className="text-left px-10 pt-10">
         <div className="flex flex-row">
           {editClikedList & listindex === activeIndexList ? <form key={listindex} onSubmit={(e) => handleListNameUpdate(e, listindex)} > <input onInput={handleWidthInput} className={`text-3xl focus:outline-0   ${restTime ? 'text-green-600' : 'text-red-600'}`} style={{ width: "auto" }} onFocus={(e) => handleFocus(e)} defaultValue={data.Title} autoFocus onChange={(e) => { setValueEditList(e.target.value) }} /> </form> : <h1 onClick={(e) => handleListDeleteButton(listindex, e)} className={`text-3xl  ${restTime ? 'text-green-600' : 'text-red-600'}`}>{data.Title}</h1>}
           {listclicked & listindex === activeIndexList & !editClikedList ? <div> <i className={`ri-edit-2-line ml-1 text-2xl   ${restTime ? 'text-green-600' : 'text-red-600'} `} onClick={() => setEditClickedList(!editClikedList)} ></i> <i onClick={() => handleArchive(listindex)} className={`ri-inbox-archive-line ml-1 text-2xl pl-1  ${restTime ? 'text-green-600' : 'text-red-600'} `}></i>   <i onClick={() => handleListDelete(data.id)} className={`ri-delete-bin-2-line ml-2 ${restTime ? 'text-green-600' : 'text-red-600'}  text-2xl`} > </i> </div> : ''} </div>
@@ -226,13 +287,19 @@ function App() {
       setTodoGrup(data.data)
     }
 
+    const fetchHistory = async () => {
+      const res = await axios.get('http://localhost:3000/doneitems')
+      setDoneItens(res.data)
+    }
+
     fetchData()
+    fetchHistory()
   }, [updateArchived])
 
-  return <div>
+  return <div className=" sm:pr-0 pr-10 " >
     <Time itemClicked={valueEditInput} funcTimeFive={handleTimeFive} />
-    <div className="flex flex-row justify-center pt-16">{renderedLists}</div>
-    {editClicked ? <div></div> : <div> {clicked ? <EditInput restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}
+    <div className="flex flex-wrap pt-6 justify-center items-center ">{renderedLists}</div>
+    {editClicked ? <div></div> : <div > {clicked ? <EditInput onDone={handleDone} restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput doneItems={doneItens} onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}
   </div>
 }
 
