@@ -4,7 +4,7 @@ import Select from 'react-select'
 import ArchiveList from './ArchiveList'
 import HistoryItems from './HistoryItems'
 
-function AddInput({ options, add, addlist, restTime, onArchivedUpdate, doneItems }) {
+function AddInput({ options, add, addlist, restTime, onArchivedUpdate, doneItems, onDeleteDone, onMoveDone }) {
     const [option, setOption] = useState([])
     const [addList, setAddList] = useState(false)
     const [addInput, setAddInput] = useState('')
@@ -73,7 +73,7 @@ function AddInput({ options, add, addlist, restTime, onArchivedUpdate, doneItems
             <i className="ri-folder-add-fill text-5xl text-regal-white" onClick={showInput}></i>
         </div>
         {modal && <ArchiveList onArchivedUpdate={onArchivedUpdate} onClose={handleModel} />}
-        {modalHistory && <HistoryItems doneItems={doneItems} onCloseHistory={handleModelHistory} />}
+        {modalHistory && <HistoryItems onDeleteDone={onDeleteDone} onMoveDone={onMoveDone} doneItems={doneItems} onCloseHistory={handleModelHistory} />}
     </div>
 }
 

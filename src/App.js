@@ -6,26 +6,28 @@ import Time from "./components/Time";
 
 
 function App() {
+  // Aplication states
   const [todogrup, setTodoGrup] = useState([])
   const [doneItens, setDoneItens] = useState([])
+
+  // Components states
   const [activeIndex, setActiveIndex] = useState('')
   const [valueEditInput, setValueEditInput] = useState('')
   const [activeIndexList, setActiveIndexList] = useState('')
   const [valueEditList, setValueEditList] = useState('')
-  const [restTime, setRestTime] = useState(false)
 
-  // Boolean states
+  // Boolean states - Components states
   const [clicked, setClicked] = useState(false)
   const [listclicked, setListClicked] = useState(false)
   const [editClicked, setEditClicked] = useState(false)
   const [editClikedList, setEditClickedList] = useState(false)
   const [updateArchived, setUpdateArchived] = useState(false)
+  const [restTime, setRestTime] = useState(false)
 
 
   const handleTimeFive = (TimeFive) => {
     setRestTime(TimeFive)
   }
-
 
   const handleDone = async () => {
     // Currently item select
@@ -43,6 +45,7 @@ function App() {
     // Item Select
     const newState = [...todogrup]
     const itemSelect = newState[listIndex].Itens[itemIndex]
+    const listSelect = newState[listIndex].Title
 
 
     // doneItens Copy
@@ -55,7 +58,7 @@ function App() {
     if (containsdata) {
       newDoneItens.map((done, doneindex) => {
         if (done.data === currentdate) {
-          done.items.push(itemSelect)
+          done.items.push({ list: listSelect, item: itemSelect })
           content = [...newDoneItens]
           setDoneItens(content)
           const newList = content[doneindex]
@@ -63,7 +66,7 @@ function App() {
         }
       })
     } else {
-      const newitem = { data: currentdate, items: [itemSelect] }
+      const newitem = { data: currentdate, items: [{ list: listSelect, item: itemSelect }] }
       content = [...newDoneItens, newitem]
       setDoneItens(content)
       await axios.post(`http://localhost:3000/doneitems/`, newitem)
@@ -79,10 +82,64 @@ function App() {
     setTodoGrup(updatedGroup)
 
     const newItem = { ...todogrup[listIndex] }
-    axios.put(`http://localhost:3000/todogroup/${listid}`, newItem)
+    await axios.put(`http://localhost:3000/todogroup/${listid}`, newItem)
+    setTodoGrup(updatedGroup)
+    setDoneItens(content)
+    setClicked(false)
     setValueEditInput('')
+  }
+
+  const handleDeleteDoneItem = async (index) => {
+    const itemindex = +index[3]
+    const dayindex = +index[0]
+
+    const updateState = [...doneItens]
+    updateState[dayindex].items.splice(itemindex, 1)
+
+    const listId = updateState[dayindex].id
+
+    setDoneItens(updateState)
+
+    const newItem = { ...doneItens[dayindex] }
+    const listItems = doneItens[dayindex].items
+    await axios.put(`http://localhost:3000/doneitems/${listId}`, newItem)
+    if (listItems.length === 0) {
+      const newList = doneItens.filter((list) => list.id !== listId)
+      setDoneItens(newList)
+      axios.delete(`http://localhost:3000/doneitems/${listId}`)
+    }
+  }
 
 
+  const handleMoveDoneItem = async (index) => {
+    const itemindex = +index[3]
+    const dayindex = +index[0]
+
+    const newState = [...doneItens]
+    const newItem = newState[dayindex].items[itemindex].item
+    const listname = newState[dayindex].items[itemindex].list
+
+    const updatedList = [...todogrup]
+    const containsListName = updatedList.some(item => item.Title === listname)
+
+    if (containsListName) {
+      updatedList.map((list, listIndex) => {
+        if (list.Title === listname) {
+          list.Itens.push(newItem)
+          setTodoGrup(updatedList)
+          const newList = todogrup[listIndex]
+          axios.put(`http://localhost:3000/todogroup/${list.id}`, newList)
+        }
+      })
+    } else if (!containsListName) {
+      const newList = { Title: listname, Itens: [newItem], isArchive: false }
+      const res = await axios.post('http://localhost:3000/todogroup/', newList)
+      const newGroup = [...todogrup, res.data]
+      setTodoGrup(newGroup)
+    }
+
+
+    handleDeleteDoneItem(index)
   }
 
   const handleUpdateArchived = () => {
@@ -299,7 +356,7 @@ function App() {
   return <div className=" sm:pr-0 pr-10 " >
     <Time itemClicked={valueEditInput} funcTimeFive={handleTimeFive} />
     <div className="flex flex-wrap pt-6 justify-center items-center ">{renderedLists}</div>
-    {editClicked ? <div></div> : <div > {clicked ? <EditInput onDone={handleDone} restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput doneItems={doneItens} onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}
+    {editClicked ? <div></div> : <div > {clicked ? <EditInput onDone={handleDone} restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput doneItems={doneItens} onDeleteDone={handleDeleteDoneItem} onMoveDone={handleMoveDoneItem} onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}
   </div>
 }
 

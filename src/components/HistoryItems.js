@@ -1,8 +1,39 @@
 import React, { useEffect, useState } from 'react'
 import ReactDom from 'react-dom'
-import axios from 'axios'
 
-function HistoryItems({ onCloseHistory, doneItems }) {
+function HistoryItems({ onCloseHistory, doneItems, onDeleteDone, onMoveDone }) {
+    const [options, setOptions] = useState(false)
+    const [actualIndex, setActualIndex] = useState('')
+
+    const handleItemHover = (boolean, index) => {
+        setOptions(boolean)
+        setActualIndex(index)
+    }
+
+    const handleDeleteClick = (twoindex) => {
+        onDeleteDone(twoindex)
+    }
+
+    const handleMoveClick = (twoindex) => {
+        onMoveDone(twoindex)
+    }
+
+
+    const renderedHistory = doneItems.map((done, doneindex) => {
+        let items = done.items
+        const renderedItems = items.map((item, itemindex) => {
+            const twoindex = `${doneindex}, ${itemindex}`
+            return <div key={item.item} className='flex flex-row' onMouseLeave={() => handleItemHover(false, twoindex)} onMouseEnter={() => handleItemHover(true, twoindex)} >
+                <h2 className=' line-through hover:no-underline ' >{item.item}</h2>
+                {options & twoindex === actualIndex ? <> <i className="ri-inbox-unarchive-line text-lg pl-2 text-red-600  hover:text-red-500 " onClick={() => { handleMoveClick(twoindex) }} ></i> <i onClick={() => handleDeleteClick(twoindex)} className="ri-close-circle-line text-lg pl-2 2 text-red-600 hover:text-red-500 "></i> </> : ''}
+            </div>
+        })
+
+        return <div key={done.data} >
+            <h1 className='text-red-600 pt-5 text-sm' >{done.data}</h1>
+            {renderedItems}
+        </div>
+    })
 
     useEffect(() => {
         document.body.classList.add('overflow-hidden');
@@ -13,27 +44,15 @@ function HistoryItems({ onCloseHistory, doneItems }) {
         }
     }, [])
 
-    const renderedHistory = doneItems.map((done) => {
-        let items = done.items
-        const renderedItems = items.map((item) => {
-            return <h2 key={item} >{item}</h2>
-        })
-
-        return <div key={done.data} >
-            <h1>{done.data}</h1>
-            {renderedItems}
-        </div>
-    })
-
     return ReactDom.createPortal(
         <div>
             <div onClick={() => onCloseHistory()} className='fixed inset-0 bg-gray-300 opacity-80 '></div>
             <div className='fixed inset-16 p-10 bg-regal-white' >
-                <div className='flex flex-col justify-start h-full' >
-                    <div className='items-center justify-center flex pb-10' >
-                        <h1 className=' text-4xl' > Done </h1>
-                        <h1 className=' pl-2 text-4xl text-red-600' > Items </h1>
-                    </div>
+                <div className='items-center justify-center flex h-1 ' >
+                    <h1 className=' text-4xl' > Done </h1>
+                    <h1 className=' pl-2 text-4xl text-red-600' > Items </h1>
+                </div>
+                <div className='flex flex-col justify-start h-full overflow-auto' >
                     {renderedHistory}
                 </div>
 
