@@ -7,6 +7,7 @@ module.exports = {
     extend: {
       colors: {
         'regal-white': '#efebe2',
+        'regal-contrast': '#E8E4D6'
       }
     },
   },

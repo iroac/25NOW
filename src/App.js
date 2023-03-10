@@ -161,7 +161,7 @@ function App() {
     const newList = newState[listindex]
 
     setTodoGrup(newState)
-    axios.put(`http://localhost:3000/todogroup/${newList.id}`, newList)
+    axios.put(`/api/updatetodogroup/${newList._id}`, newList)
   }
 
   // Make any input width at the same size of the content
@@ -213,8 +213,8 @@ function App() {
   // A spend some time trying to figure why after create the put request to addItem was not working and finally found out that was the order of this function
   // A tried a lot of stuff but It's always better looking in the function order first 
   const addNewList = async (listname) => {
-    const newList = { Title: listname, Itens: [], isArchive: false }
-    const res = await axios.post('http://localhost:3000/todogroup/', newList)
+    const newList = { Title: listname }
+    const res = await axios.post('/api/newtodogroup', newList)
     const newGroup = [...todogrup, res.data]
     setTodoGrup(newGroup)
     setListClicked(false)
@@ -229,7 +229,7 @@ function App() {
   // so we push the item to the varible and set the TodoGrup for it, create a varible the represent the currently obj to be modified and put that as the second argument on the axios.put as know as payload.
   const addItem = async (item, id) => {
     // Find the list id by the index 
-    const listIndex = todogrup.findIndex(list => list.id === id)
+    const listIndex = todogrup.findIndex(list => list._id === id)
 
     // Assign newState as a copy of todogrup so we can modify it
     const newState = [...todogrup]
@@ -240,7 +240,7 @@ function App() {
 
     // Assing the newItem and made a put request so replace the item before with the new one.
     const newItem = { ...todogrup[listIndex] }
-    await axios.put(`http://localhost:3000/todogroup/${id}`, newItem)
+    await axios.put(`/api/updatetodogroup/${id}`, newItem)
   }
 
   // This was so hard, i was tring to use the filter method but it was not working so I use the splice method then works. I search and seems like the splice is used to remove or replace
@@ -252,12 +252,12 @@ function App() {
     const updatedGroup = [...todogrup]
     updatedGroup[listIndex].Itens.splice(itemIndex, 1)
 
-    const listid = updatedGroup[listIndex].id
+    const listid = updatedGroup[listIndex]._id
 
     setTodoGrup(updatedGroup)
 
     const newItem = { ...todogrup[listIndex] }
-    await axios.put(`http://localhost:3000/todogroup/${listid}`, newItem)
+    await axios.put(`/api/updatetodogroup/${listid}`, newItem)
     setValueEditInput('')
     setClicked(false)
   }
@@ -272,10 +272,10 @@ function App() {
   }
 
   // Handle the List Delete using a filter method
-  const handleListDelete = (index) => {
-    const newList = todogrup.filter((list) => list.id !== index)
+  const handleListDelete = (id) => {
+    const newList = todogrup.filter((list) => list._id !== id)
     setTodoGrup(newList)
-    axios.delete(`http://localhost:3000/todogroup/${index}`)
+    axios.delete(`/api/deletetodogroup/${id}`)
   }
 
   // All below is refering to the data fetch and the functions to change between menus edit/add
@@ -308,7 +308,7 @@ function App() {
           content = <form key={i} onSubmit={(e) => handleUpdateItem(e, i, listindex)}> <input onInput={handleWidthInput} onFocus={(e) => handleFocus(e)} className={`text-lg focus:outline-0 ${restTime ? 'text-green-600' : 'text-red-600'}`} style={{ width: "auto" }} autoFocus defaultValue={item} onChange={(e) => { setValueEditInput(e.target.value) }}  ></input> </form>
         }
         else {
-          content = <h2 onClick={(e) => handleClick(twoindex, e)} key={i} className={`text-lg ${twoindex === activeIndex ? restTime ? 'text-green-600' : 'text-red-600' : ''}`}>{item}</h2>
+          content = <h2 onClick={(e) => handleClick(twoindex, e)} key={i} className={`text-lg cursor-pointer ${twoindex === activeIndex ? restTime ? 'text-green-500' : 'text-red-500' : ''}`}>{item}</h2>
         }
         return content
       }
@@ -317,8 +317,8 @@ function App() {
 
       return (<div key={data.Title} className="text-left px-10 pt-10">
         <div className="flex flex-row">
-          {editClikedList & listindex === activeIndexList ? <form key={listindex} onSubmit={(e) => handleListNameUpdate(e, listindex)} > <input onInput={handleWidthInput} className={`text-3xl focus:outline-0   ${restTime ? 'text-green-600' : 'text-red-600'}`} style={{ width: "auto" }} onFocus={(e) => handleFocus(e)} defaultValue={data.Title} autoFocus onChange={(e) => { setValueEditList(e.target.value) }} /> </form> : <h1 onClick={(e) => handleListDeleteButton(listindex, e)} className={`text-3xl  ${restTime ? 'text-green-600' : 'text-red-600'}`}>{data.Title}</h1>}
-          {listclicked & listindex === activeIndexList & !editClikedList ? <div> <i className={`ri-edit-2-line ml-1 text-2xl   ${restTime ? 'text-green-600' : 'text-red-600'} `} onClick={() => setEditClickedList(!editClikedList)} ></i> <i onClick={() => handleArchive(listindex)} className={`ri-inbox-archive-line ml-1 text-2xl pl-1  ${restTime ? 'text-green-600' : 'text-red-600'} `}></i>   <i onClick={() => handleListDelete(data.id)} className={`ri-delete-bin-2-line ml-2 ${restTime ? 'text-green-600' : 'text-red-600'}  text-2xl`} > </i> </div> : ''} </div>
+          {editClikedList & listindex === activeIndexList ? <form key={listindex} onSubmit={(e) => handleListNameUpdate(e, listindex)} > <input onInput={handleWidthInput} className={`text-3xl focus:outline-0   ${restTime ? 'text-green-600' : 'text-red-600'}`} style={{ width: "auto" }} onFocus={(e) => handleFocus(e)} defaultValue={data.Title} autoFocus onChange={(e) => { setValueEditList(e.target.value) }} /> </form> : <h1 onClick={(e) => handleListDeleteButton(listindex, e)} className={`text-3xl cursor-pointer ${restTime ? 'text-green-600 hover:text-green-500 ' : 'text-red-600 hover:text-red-500 '}`}>{data.Title}</h1>}
+          {listclicked & listindex === activeIndexList & !editClikedList ? <div> <i className={`ri-edit-2-line ml-1 text-2xl   ${restTime ? 'text-green-600' : 'text-red-600'} `} onClick={() => setEditClickedList(!editClikedList)} ></i> <i onClick={() => handleArchive(listindex)} className={`ri-inbox-archive-line ml-1 text-2xl pl-1  ${restTime ? 'text-green-600' : 'text-red-600'} `}></i>   <i onClick={() => handleListDelete(data._id)} className={`ri-delete-bin-2-line ml-2 ${restTime ? 'text-green-600' : 'text-red-600'}  text-2xl`} > </i> </div> : ''} </div>
         {rendereditems}
       </div>
       )
@@ -330,7 +330,7 @@ function App() {
   // A map that take the Title to put on the selection as options at AddInput
   const optionsList = todogrup.map((todo) => {
     if (!todo.isArchive) {
-      return { value: todo.id, label: todo.Title }
+      return { value: todo._id, label: todo.Title }
     } else {
       return { value: undefined, label: undefined }
     }
@@ -340,7 +340,8 @@ function App() {
   // A fetch to take all list and itens from the database
   useEffect(() => {
     const fetchData = async () => {
-      const data = await axios.get('http://localhost:3000/todogroup')
+      const data = await axios.get('/api/todogroup')
+      console.log(data)
       setTodoGrup(data.data)
     }
 
@@ -348,7 +349,6 @@ function App() {
       const res = await axios.get('http://localhost:3000/doneitems')
       setDoneItens(res.data)
     }
-
     fetchData()
     fetchHistory()
   }, [updateArchived])
