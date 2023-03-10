@@ -1,0 +1,45 @@
+{
+  "todogroup": [
+    {
+      "Title": "Code",
+      "Itens": [
+        "Clean up Code"
+      ],
+      "isArchive": true,
+      "id": 5
+    },
+    {
+      "Title": "Code",
+      "Itens": [
+        "Implement the basic fatch data on API",
+        "Create the Server routes",
+        "Connect mongo DB",
+        "Connect Node With React with proxy"
+      ],
+      "isArchive": false,
+      "id": 6
+    }
+  ],
+  "doneitems": [
+    {
+      "data": "7 March 2023",
+      "items": [
+        {
+          "item": "Clean up Bedroom",
+          "list": "Home"
+        }
+      ],
+      "id": 1
+    },
+    {
+      "data": "8 March 2023",
+      "items": [
+        {
+          "list": "Nova Lista",
+          "item": "Novo Item"
+        }
+      ],
+      "id": 2
+    }
+  ]
+}

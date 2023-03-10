@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+    background-color: #efebe2;
+    font-family: 'League Spartan', sans-serif;
+}
+
+input {
+    background-color: #efebe2;
+    border-radius: 10px;
+}
