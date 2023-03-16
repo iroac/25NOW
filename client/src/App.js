@@ -3,12 +3,15 @@ import axios from 'axios'
 import AddInput from "./components/AddInput";
 import EditInput from "./components/EditInput";
 import Time from "./components/Time";
+import toast, { Toaster } from 'react-hot-toast'
+import { Link, useNavigate } from "react-router-dom";
 
 
 function App() {
   // Aplication states
   const [todogrup, setTodoGrup] = useState([])
   const [doneItens, setDoneItens] = useState([])
+  const [user, setUser] = useState({})
 
   // Components states
   const [activeIndex, setActiveIndex] = useState('')
@@ -24,9 +27,30 @@ function App() {
   const [updateArchived, setUpdateArchived] = useState(false)
   const [restTime, setRestTime] = useState(false)
 
+  const navigate = useNavigate()
+
 
   const handleTimeFive = (TimeFive) => {
     setRestTime(TimeFive)
+  }
+
+  // This was so hard, i was tring to use the filter method but it was not working so I use the splice method then works. I search and seems like the splice is used to remove or replace
+  // But the filter is use to create a new array that pass a certain condition. In other words just a big confusion 
+  const deleteItem = async () => {
+    const itemIndex = +activeIndex[3]
+    const listIndex = +activeIndex[0]
+
+    const updatedGroup = [...todogrup]
+    updatedGroup[listIndex].Itens.splice(itemIndex, 1)
+
+    setTodoGrup(updatedGroup)
+    const listid = todogrup[listIndex]._id
+
+    const newItem = { ...todogrup[listIndex] }
+    delete newItem.author
+    setValueEditInput('')
+    setClicked(false)
+    await axios.put(`/api/updatetodogroup/${listid}`, newItem)
   }
 
   const handleDone = async () => {
@@ -54,7 +78,6 @@ function App() {
     const containsdata = data.some(item => item === currentdate)
     let content;
 
-
     if (containsdata) {
       newDoneItens.map((done, doneindex) => {
         if (done.data === currentdate) {
@@ -62,31 +85,21 @@ function App() {
           content = [...newDoneItens]
           setDoneItens(content)
           const newList = content[doneindex]
-          axios.put(`http://localhost:3000/doneitems/${done.id}`, newList)
+          delete newList.author
+          axios.put(`/api/updatedonetodo/${done._id}`, newList)
         }
       })
     } else {
       const newitem = { data: currentdate, items: [{ list: listSelect, item: itemSelect }] }
       content = [...newDoneItens, newitem]
       setDoneItens(content)
-      await axios.post(`http://localhost:3000/doneitems/`, newitem)
+      await axios.post(`/api/newdonetodo`, newitem)
+      setUpdateArchived(!updateArchived)
     }
 
 
-    // Delete Logic
-    const updatedGroup = [...todogrup]
-    updatedGroup[listIndex].Itens.splice(itemIndex, 1)
-
-    const listid = updatedGroup[listIndex].id
-
-    setTodoGrup(updatedGroup)
-
-    const newItem = { ...todogrup[listIndex] }
-    await axios.put(`http://localhost:3000/todogroup/${listid}`, newItem)
-    setTodoGrup(updatedGroup)
-    setDoneItens(content)
+    deleteItem()
     setClicked(false)
-    setValueEditInput('')
   }
 
   const handleDeleteDoneItem = async (index) => {
@@ -96,20 +109,20 @@ function App() {
     const updateState = [...doneItens]
     updateState[dayindex].items.splice(itemindex, 1)
 
-    const listId = updateState[dayindex].id
+    const listId = updateState[dayindex]._id
 
     setDoneItens(updateState)
 
     const newItem = { ...doneItens[dayindex] }
+    delete newItem.author
     const listItems = doneItens[dayindex].items
-    await axios.put(`http://localhost:3000/doneitems/${listId}`, newItem)
+    axios.put(`/api/updatedonetodo/${listId}`, newItem)
     if (listItems.length === 0) {
-      const newList = doneItens.filter((list) => list.id !== listId)
+      const newList = doneItens.filter((list) => list._id !== listId)
       setDoneItens(newList)
-      axios.delete(`http://localhost:3000/doneitems/${listId}`)
+      axios.delete(`/api/deletetododone/${listId}`)
     }
   }
-
 
   const handleMoveDoneItem = async (index) => {
     const itemindex = +index[3]
@@ -128,12 +141,13 @@ function App() {
           list.Itens.push(newItem)
           setTodoGrup(updatedList)
           const newList = todogrup[listIndex]
-          axios.put(`http://localhost:3000/todogroup/${list.id}`, newList)
+          delete newList.author
+          axios.put(`/api/updatetodogroup/${list._id}`, newList)
         }
       })
     } else if (!containsListName) {
       const newList = { Title: listname, Itens: [newItem], isArchive: false }
-      const res = await axios.post('http://localhost:3000/todogroup/', newList)
+      const res = await axios.post('/api/newtodogroup/', newList)
       const newGroup = [...todogrup, res.data]
       setTodoGrup(newGroup)
     }
@@ -159,6 +173,7 @@ function App() {
     newState[listindex] = { ...newState[listindex], Title: valueEditList }
 
     const newList = newState[listindex]
+    delete newList.author
 
     setTodoGrup(newState)
     axios.put(`/api/updatetodogroup/${newList._id}`, newList)
@@ -180,12 +195,13 @@ function App() {
     const newState = [...todogrup]
     newState[listIndex].isArchive = true
 
-    const listid = newState[listIndex].id
+    const listid = newState[listIndex]._id
 
     setTodoGrup(newState)
 
     const newList = { ...todogrup[listIndex] }
-    axios.put(`http://localhost:3000/todogroup/${listid}`, newList)
+    delete newList.author
+    axios.put(`/api/updatetodogroup/${listid}`, newList)
   }
 
 
@@ -201,23 +217,28 @@ function App() {
     const newState = [...todogrup]
     newState[listindex].Itens.splice(index, 1, valueEditInput)
 
-    const listId = newState[listindex].id
+    const listId = newState[listindex]._id
 
     setTodoGrup(newState)
 
     const newList = { ...todogrup[listindex] }
-    axios.put(`http://localhost:3000/todogroup/${listId}`, newList)
+    delete newList.author
+    axios.put(`/api/updatetodogroup/${listId}`, newList)
   }
 
 
   // A spend some time trying to figure why after create the put request to addItem was not working and finally found out that was the order of this function
   // A tried a lot of stuff but It's always better looking in the function order first 
   const addNewList = async (listname) => {
-    const newList = { Title: listname }
-    const res = await axios.post('/api/newtodogroup', newList)
-    const newGroup = [...todogrup, res.data]
-    setTodoGrup(newGroup)
-    setListClicked(false)
+    try {
+      const newList = { Title: listname, Itens: [], isArchive: false }
+      const res = await axios.post('/api/newtodogroup', newList)
+      const newGroup = [...todogrup, res.data]
+      setTodoGrup(newGroup)
+      setListClicked(false)
+    } catch (err) {
+      toast.error(err.response.data)
+    }
   }
 
   // I just pass most time of my day (02/28) to make this code. I was hard because at first I think 
@@ -228,38 +249,33 @@ function App() {
   // Then we create a new varible and assign that to the todogrup so we'll not modify the status. I know't how but if we not do this the renderTodo apresents a error that can map. So I guess that state has to stay aways clean in all modification.
   // so we push the item to the varible and set the TodoGrup for it, create a varible the represent the currently obj to be modified and put that as the second argument on the axios.put as know as payload.
   const addItem = async (item, id) => {
-    // Find the list id by the index 
-    const listIndex = todogrup.findIndex(list => list._id === id)
+    try {
+      // Find the list id by the index 
+      const listIndex = todogrup.findIndex(list => list._id === id)
 
-    // Assign newState as a copy of todogrup so we can modify it
-    const newState = [...todogrup]
-    // Push the item to the right place 
-    newState[listIndex].Itens.push(item)
-    // Seting the todoGrup as the newState
-    setTodoGrup(newState)
+      // Assign newState as a copy of todogrup so we can modify it
+      const newState = [...todogrup]
+      // Push the item to the right place 
+      if (!newState[listIndex]) {
+        toast.error('Please select a list')
+      } else {
+        if (item.length >= 50) {
+          toast.error("item length must be less than or equal to 50 characters long")
+        } else {
+          newState[listIndex].Itens.push(item)
+          // Seting the todoGrup as the newState
+          setTodoGrup(newState)
 
-    // Assing the newItem and made a put request so replace the item before with the new one.
-    const newItem = { ...todogrup[listIndex] }
-    await axios.put(`/api/updatetodogroup/${id}`, newItem)
-  }
+          // Assing the newItem and made a put request so replace the item before with the new one.
+          const newItem = { ...todogrup[listIndex] }
+          delete newItem.author
+          await axios.put(`/api/updatetodogroup/${id}`, newItem)
+        }
+      }
+    } catch (err) {
+      toast.error(err.response.data)
+    }
 
-  // This was so hard, i was tring to use the filter method but it was not working so I use the splice method then works. I search and seems like the splice is used to remove or replace
-  // But the filter is use to create a new array that pass a certain condition. In other words just a big confusion 
-  const deleteItem = async () => {
-    const itemIndex = +activeIndex[3]
-    const listIndex = +activeIndex[0]
-
-    const updatedGroup = [...todogrup]
-    updatedGroup[listIndex].Itens.splice(itemIndex, 1)
-
-    const listid = updatedGroup[listIndex]._id
-
-    setTodoGrup(updatedGroup)
-
-    const newItem = { ...todogrup[listIndex] }
-    await axios.put(`/api/updatetodogroup/${listid}`, newItem)
-    setValueEditInput('')
-    setClicked(false)
   }
 
 
@@ -295,6 +311,16 @@ function App() {
     setClicked(false)
     setActiveIndex('')
     setValueEditInput('')
+  }
+
+  const handleLogout = async () => {
+    try {
+      const res = await axios.get('/api/logout')
+      toast.success(res.data)
+      navigate('/')
+    } catch (e) {
+      toast.error(e.response.data)
+    }
   }
 
   // Maps to handle with the fetch to display currectly 
@@ -340,20 +366,33 @@ function App() {
   // A fetch to take all list and itens from the database
   useEffect(() => {
     const fetchData = async () => {
-      const data = await axios.get('/api/todogroup')
-      console.log(data)
-      setTodoGrup(data.data)
+      try {
+        const data = await axios.get('/api/todogroup', { withCredentials: true })
+        setTodoGrup(data.data)
+      } catch (err) {
+        toast.error(err.response.data)
+      }
     }
 
     const fetchHistory = async () => {
-      const res = await axios.get('http://localhost:3000/doneitems')
+      const res = await axios.get('/api/getdonetodo', { withCredentials: true })
       setDoneItens(res.data)
     }
+
+
+    const fetchUser = async () => {
+      const res = await axios.get('/api/getuser', { withCredentials: true })
+      setUser(res.data)
+    }
+
+    fetchUser()
     fetchData()
     fetchHistory()
   }, [updateArchived])
 
   return <div className=" sm:pr-0 pr-10 " >
+    <Toaster position="top-center" reverseOrder={false} />
+    <div className="flex flex-row justify-end items-end" > <h2 className=" pr-1" >{user.username}</h2> <Link onClick={handleLogout} className=" cursor-pointer ri-login-circle-line text-2xl text-red-600 hover:text-red-500 "></Link> </div>
     <Time itemClicked={valueEditInput} funcTimeFive={handleTimeFive} />
     <div className="flex flex-wrap pt-6 justify-center items-center ">{renderedLists}</div>
     {editClicked ? <div></div> : <div > {clicked ? <EditInput onDone={handleDone} restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput doneItems={doneItens} onDeleteDone={handleDeleteDoneItem} onMoveDone={handleMoveDoneItem} onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}

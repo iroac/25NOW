@@ -23,13 +23,13 @@ function HistoryItems({ onCloseHistory, doneItems, onDeleteDone, onMoveDone, res
         let items = done.items
         const renderedItems = items.map((item, itemindex) => {
             const twoindex = `${doneindex}, ${itemindex}`
-            return <div key={item.item} className='flex flex-row' onMouseLeave={() => handleItemHover(false, twoindex)} onMouseEnter={() => handleItemHover(true, twoindex)} >
+            return <div key={itemindex} className='flex flex-row' onMouseLeave={() => handleItemHover(false, twoindex)} onMouseEnter={() => handleItemHover(true, twoindex)} >
                 <h2 className=' line-through hover:no-underline ' >{item.item}</h2>
                 {options & twoindex === actualIndex ? <> <i className={`ri-inbox-unarchive-line cursor-pointer text-lg pl-2 ${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500 '}`} onClick={() => { handleMoveClick(twoindex) }} ></i> <i onClick={() => handleDeleteClick(twoindex)} className={`ri-close-circle-line cursor-pointer text-lg pl-2 2 ${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500 '}`}></i> </> : ''}
             </div>
         })
 
-        return <div key={done.data} >
+        return <div key={doneindex} >
             <h1 className={`${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500 '} pt-5 text-sm`} >{done.data}</h1>
             {renderedItems}
         </div>

@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import Select from 'react-select'
 import ArchiveList from './ArchiveList'
 import HistoryItems from './HistoryItems'
+import toast from 'react-hot-toast'
 
 function AddInput({ options, add, addlist, restTime, onArchivedUpdate, doneItems, onDeleteDone, onMoveDone }) {
     const [option, setOption] = useState([])
@@ -17,13 +18,21 @@ function AddInput({ options, add, addlist, restTime, onArchivedUpdate, doneItems
         if (e) {
             e.preventDefault()
         }
-        add(addInput, selectedOption.value)
-        setSelectedOption(null)
-        setAddInput('')
+
+        if (addInput.trim() === '') {
+            toast.error('Please enter an item name')
+        } else if (!selectedOption) {
+            toast.error('Please select a list')
+        } else {
+            add(addInput, selectedOption.value)
+            setSelectedOption(null)
+            setAddInput('')
+        }
     }
 
     const handleModel = () => {
         setModal(!modal)
+        onArchivedUpdate()
     }
 
     const handleModelHistory = () => {
@@ -37,6 +46,8 @@ function AddInput({ options, add, addlist, restTime, onArchivedUpdate, doneItems
 
         if (addNewList === '') {
             setAddList(!addList)
+        } else if (addNewList.trim() === '') {
+            toast.error('Please enter a list name')
         } else {
             addlist(addNewList)
             setAddNewList('')

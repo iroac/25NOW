@@ -10,12 +10,11 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
     const handleUnarchive = async (listIndex) => {
         const newState = [...archiveList]
         newState[listIndex].isArchive = false
-        const listId = newState[listIndex].id
+        const listId = newState[listIndex]._id
 
         setArchiveList(newState)
         const newList = { ...newState[listIndex] }
-        await axios.put(`http://localhost:3000/todogroup/${listId}`, newList)
-        onArchivedUpdate()
+        axios.put(`/api/updatetodogroup/${listId}`, newList)
     }
 
     const handleDelete = async (id) => {
@@ -32,7 +31,7 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await axios.get('http://localhost:3000/todogroup')
+            const data = await axios.get('/api/todogroup')
             setArchiveList(data.data)
         }
         document.body.classList.add('overflow-hidden');
@@ -44,8 +43,8 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
 
     const renderedLists = archiveList.map((list, listindex) => {
         if (list.isArchive) {
-            return <div key={list.id} className='flex flex-row'>  <h2 onClick={() => handleListClick(list.id)} className={`text-lg cursor-pointer ${restTime ? `text-green-600 ${!editMode && 'hover:text-green-500'} ` : `text-red-600 ${!editMode && 'hover:text-red-500'} `}`}> - {list.Title}</h2>
-                {editMode & currentId === list.id ? <> <i className={`ri-inbox-unarchive-line cursor-pointer ${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500 '} text-xl pl-2`} onClick={() => handleUnarchive(listindex)} > </i> <i onClick={() => handleDelete(list.id)} className={`ri-delete-bin-2-line ${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500 '} cursor-pointer text-xl pl-2`}></i> </> : ''}
+            return <div key={list._id} className='flex flex-row'>  <h2 onClick={() => handleListClick(list._id)} className={`text-lg cursor-pointer ${restTime ? `text-green-600 ${!editMode && 'hover:text-green-500'} ` : `text-red-600 ${!editMode && 'hover:text-red-500'} `}`}> - {list.Title}</h2>
+                {editMode & currentId === list._id ? <> <i className={`ri-inbox-unarchive-line cursor-pointer ${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500 '} text-xl pl-2`} onClick={() => handleUnarchive(listindex)} > </i> <i onClick={() => handleDelete(list._id)} className={`ri-delete-bin-2-line ${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500 '} cursor-pointer text-xl pl-2`}></i> </> : ''}
             </div>
         } else {
             return ''
