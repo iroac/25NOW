@@ -93,13 +93,13 @@ function App() {
       const newitem = { data: currentdate, items: [{ list: listSelect, item: itemSelect }] }
       content = [...newDoneItens, newitem]
       setDoneItens(content)
-      await axios.post(`/api/newdonetodo`, newitem)
+      axios.post(`/api/newdonetodo`, newitem)
       setUpdateArchived(!updateArchived)
     }
 
 
-    deleteItem()
     setClicked(false)
+    deleteItem()
   }
 
   const handleDeleteDoneItem = async (index) => {
@@ -317,7 +317,7 @@ function App() {
     try {
       const res = await axios.get('/api/logout')
       toast.success(res.data)
-      navigate('/')
+      navigate('/login')
     } catch (e) {
       toast.error(e.response.data)
     }

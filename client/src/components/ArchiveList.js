@@ -14,13 +14,14 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
 
         setArchiveList(newState)
         const newList = { ...newState[listIndex] }
+        delete newList.author
         axios.put(`/api/updatetodogroup/${listId}`, newList)
     }
 
     const handleDelete = async (id) => {
-        const newList = archiveList.filter((list) => list.id !== id)
+        const newList = archiveList.filter((list) => list._id !== id)
         setArchiveList(newList)
-        await axios.delete(`http://localhost:3000/todogroup/${id}`)
+        await axios.delete(`/api/deletetodogroup/${id}`)
         onArchivedUpdate()
     }
 

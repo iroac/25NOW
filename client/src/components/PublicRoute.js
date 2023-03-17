@@ -9,12 +9,16 @@ function PublicRoute({ children }) {
 
     useEffect(() => {
         const fetchUser = async () => {
-            try {
-                await axios.get('/api/getuser', { withCredentials: true })
+            const res = await axios.get('/api/getuser', { withCredentials: true })
+
+            if (res.data.username) {
                 navigate('/')
-            } catch (err) {
+            } else {
                 setUser(true)
             }
+
+
+
         }
 
         fetchUser()

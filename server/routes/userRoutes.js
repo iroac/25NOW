@@ -34,7 +34,7 @@ router.get('/logout', (req, res, next) => {
 
 router.get('/getuser', (req, res, next) => {
     if (!req.isAuthenticated()) {
-        return next(new AppError('Is need to be signin', 500))
+        res.send('Is need to be signin')
     } else {
         res.send(req.user)
     }
