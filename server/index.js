@@ -3,12 +3,12 @@ const express = require('express')
 const mongoSanitize = require('express-mongo-sanitize')
 const helmet = require('helmet')
 const session = require('express-session')
-const bcrypt = require('bcrypt')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const cookieParser = require('cookie-parser');
 const User = require('./models/user')
 const cors = require('cors'); // pass reqs to the localhost:3001
+require('dotenv').config();
 
 const app = express()
 
@@ -17,7 +17,7 @@ const app = express()
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', true) // mongoose warning to put this here
 // Mongoose config and name of the new database and path to connect with mongoDB
-mongoose.connect('mongodb://localhost:27017/25NOW', {
+mongoose.connect(`${process.env.MONGODB_URL}/25NOW`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
@@ -44,7 +44,7 @@ app.use(cookieParser());
 const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', resave: false, saveUninitialized: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
 app.use(session(sessionConfig))
 // Cors config middleware
-app.use(cors({ origin: 'http://localhost:3000', credentials: true })) // enable cookies and sessions across domains}));
+app.use(cors({ origin: 'http://localhost:3001', credentials: true })) // enable cookies and sessions across domains}));
 
 
 
@@ -80,12 +80,11 @@ passport.deserializeUser(User.deserializeUser())
 
 // Routes Config
 app.use(express.json()); // enable parsing of request body as JSON, add the res payload on the req body as keys
-const todoGroupRoutes = require('./routes/todoGroupRoutes')
-app.use('/api', todoGroupRoutes)
 const doneItemsRoutes = require('./routes/doneItemsRoutes')
-app.use('/api', doneItemsRoutes)
 const userRoutes = require('./routes/userRoutes')
-app.use('/api', userRoutes)
+const todoGroupRoutes = require('./routes/todoGroupRoutes')
+app.use('/api', todoGroupRoutes, doneItemsRoutes, userRoutes)
+
 
 // Error handle
 app.use((err, req, res, next) => {

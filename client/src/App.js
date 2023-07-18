@@ -8,12 +8,12 @@ import { Link, useNavigate } from "react-router-dom";
 
 
 function App() {
-  // Aplication states
+  // Aplication states 
   const [todogrup, setTodoGrup] = useState([])
   const [doneItens, setDoneItens] = useState([])
   const [user, setUser] = useState({})
 
-  // Components states
+  // Components states   
   const [activeIndex, setActiveIndex] = useState('')
   const [valueEditInput, setValueEditInput] = useState('')
   const [activeIndexList, setActiveIndexList] = useState('')
@@ -93,7 +93,7 @@ function App() {
       const newitem = { data: currentdate, items: [{ list: listSelect, item: itemSelect }] }
       content = [...newDoneItens, newitem]
       setDoneItens(content)
-      axios.post(`/api/newdonetodo`, newitem)
+      await axios.post(`/api/newdonetodo`, newitem)
       setUpdateArchived(!updateArchived)
     }
 
@@ -318,8 +318,8 @@ function App() {
       const res = await axios.get('/api/logout')
       toast.success(res.data)
       navigate('/login')
-    } catch (e) {
-      toast.error(e.response.data)
+    } catch (err) {
+      toast.error(err.data)
     }
   }
 
@@ -390,7 +390,7 @@ function App() {
     fetchHistory()
   }, [updateArchived])
 
-  return <div className=" sm:pr-0 pr-10 " >
+  return <div className=" sm:pr-0 " >
     <Toaster position="top-center" reverseOrder={false} />
     <div className="flex flex-row justify-end items-end" > <h2 className=" pr-1" >{user.username}</h2> <Link onClick={handleLogout} className=" cursor-pointer ri-login-circle-line text-2xl text-red-600 hover:text-red-500 "></Link> </div>
     <Time itemClicked={valueEditInput} funcTimeFive={handleTimeFive} />
