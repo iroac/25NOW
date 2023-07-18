@@ -34,11 +34,6 @@ app.use(helmet({ contentSecurityPolicy: false }))
 
 
 
-
-
-
-
-
 // Session MiddleWare
 app.use(cookieParser());
 const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', resave: false, saveUninitialized: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
@@ -68,16 +63,6 @@ passport.deserializeUser(User.deserializeUser())
 
 
 
-
-
-
-
-
-
-
-
-
-
 // Routes Config
 app.use(express.json()); // enable parsing of request body as JSON, add the res payload on the req body as keys
 const doneItemsRoutes = require('./routes/doneItemsRoutes')
@@ -85,6 +70,9 @@ const userRoutes = require('./routes/userRoutes')
 const todoGroupRoutes = require('./routes/todoGroupRoutes')
 app.use('/api', todoGroupRoutes, doneItemsRoutes, userRoutes)
 
+app.get('/', (req, res) => {
+    res.send('Hi')
+})
 
 // Error handle
 app.use((err, req, res, next) => {
