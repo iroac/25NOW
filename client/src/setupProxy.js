@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'https://25now-api-iroac.vercel.app/',
+            target: 'https://25now-api.vercel.app',
             changeOrigin: true,
         })
     );
