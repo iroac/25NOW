@@ -10,8 +10,12 @@ function ProtectRoute({ children }) {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                await axios.get('/api/getuser', { withCredentials: true })
-                setUser(true)
+                const res = await axios.get('/api/getuser', { withCredentials: true })
+                if (res.data) {
+                    setUser(true)
+                } else {
+                    navigate('/login')
+                }
             } catch (err) {
                 navigate('/login')
             }

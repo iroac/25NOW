@@ -15,7 +15,6 @@ function PublicRoute({ children }) {
                 navigate('/')
             } else {
                 setUser(true)
-                navigate('/login')
             }
 
 
