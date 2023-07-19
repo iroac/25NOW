@@ -12,7 +12,7 @@ require('dotenv').config();
 
 const app = express()
 // Cors config middleware
-app.use(cors({ origin: 'https://25-now.vercel.app/', credentials: true })) // enable cookies and sessions across domains}));
+app.use(cors({ origin: 'https://25-now.vercel.app/', methods: ["POST", "GET", "PUT", "DELETE"], credentials: true })) // enable cookies and sessions across domains}));
 
 // DataBase configuration
 // Require mongoose - ORM
