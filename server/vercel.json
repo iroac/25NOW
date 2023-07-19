@@ -1,11 +1,15 @@
 {
+  "version": 2,
     "builds": [
       {
-        "src": "server.js",
+        "src": "*.js", 
         "use": "@vercel/node"
       }
     ],
-    "env": {
-      "SANITIZE_ALLOW_PROCESSING_INSTRUCTIONS": "true"
-    }
+    "routes": [
+{
+  "src": "/(.*)",
+  "dest": "/"
+}
+    ]
   }

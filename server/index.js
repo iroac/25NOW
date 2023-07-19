@@ -17,7 +17,7 @@ const app = express()
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', true) // mongoose warning to put this here
 // Mongoose config and name of the new database and path to connect with mongoDB
-mongoose.connect(`${process.env.MONGODB_URL}/25NOW`, {
+mongoose.connect(`${process.env.MONGODB_URL}`, {
     useNewUrlParser: true,
     useUnifiedTopology: true
 })
