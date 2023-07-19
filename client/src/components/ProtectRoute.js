@@ -11,7 +11,7 @@ function ProtectRoute({ children }) {
         const fetchUser = async () => {
             try {
                 const res = await axios.get('/api/getuser', { withCredentials: true })
-                if (res.data) {
+                if (res.data.username) {
                     setUser(true)
                 } else {
                     navigate('/login')
