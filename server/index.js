@@ -11,16 +11,15 @@ const cors = require('cors'); // pass reqs to the localhost:3001
 require('dotenv').config();
 
 const app = express()
+// Cors config middleware
+app.use(cors({ origin: 'https://25-now.vercel.app/', credentials: true })) // enable cookies and sessions across domains}));
 
 // DataBase configuration
 // Require mongoose - ORM
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', true) // mongoose warning to put this here
 // Mongoose config and name of the new database and path to connect with mongoDB
-mongoose.connect(`${process.env.MONGODB_URL}`, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
+mongoose.connect(`${process.env.MONGODB_URL}`);
 // Just to check if the connection works
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -38,8 +37,6 @@ app.use(helmet({ contentSecurityPolicy: false }))
 app.use(cookieParser());
 const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', resave: false, saveUninitialized: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
 app.use(session(sessionConfig))
-// Cors config middleware
-app.use(cors({ origin: 'https://25-now.vercel.app/', credentials: true })) // enable cookies and sessions across domains}));
 
 
 
