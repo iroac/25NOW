@@ -13,7 +13,9 @@ function Login() {
     const handleSubmit = async () => {
         try {
             const res = await axios.post('/api/login', { username, password }, { withCredentials: true })
-            navigate('/')
+            if (res) {
+                navigate('/')
+            }
         } catch (e) {
             toast.error(e.response.data)
         }
