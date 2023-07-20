@@ -71,6 +71,11 @@ app.get('/', (req, res) => {
     res.send('Hi')
 })
 
+
+app.post('/testpost', (req, res) => {
+    res.send('Hi this is a post req')
+})
+
 // Error handle
 app.use((err, req, res, next) => {
     const { statusCode = 500, message = 'Something went wrong' } = err;
