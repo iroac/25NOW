@@ -7,6 +7,7 @@ const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const cookieParser = require('cookie-parser');
 const User = require('./models/user')
+const MongoStore = require('connect-mongo');
 const cors = require('cors'); // pass reqs to the localhost:3001
 require('dotenv').config();
 
@@ -19,7 +20,10 @@ app.use(cors({ origin: ['https://25-now.vercel.app'], methods: ["POST", "GET"], 
 const mongoose = require('mongoose')
 mongoose.set('strictQuery', true) // mongoose warning to put this here
 // Mongoose config and name of the new database and path to connect with mongoDB
-mongoose.connect(`${process.env.MONGODB_URL}`);
+mongoose.connect(`${process.env.MONGODB_URL}`, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+});
 // Just to check if the connection works
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error:"));
@@ -35,7 +39,7 @@ app.use(helmet({ contentSecurityPolicy: false }))
 
 // Session MiddleWare
 app.use(cookieParser());
-const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', resave: false, saveUninitialized: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
+const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, saveUninitialized: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
 app.use(session(sessionConfig))
 
 
@@ -56,10 +60,6 @@ passport.deserializeUser(User.deserializeUser())
 
 
 
-
-
-
-
 // Routes Config
 app.use(express.json()); // enable parsing of request body as JSON, add the res payload on the req body as keys
 const doneItemsRoutes = require('./routes/doneItemsRoutes')
@@ -69,11 +69,6 @@ app.use('/api', todoGroupRoutes, doneItemsRoutes, userRoutes)
 
 app.get('/', (req, res) => {
     res.send('Hi')
-})
-
-
-app.post('/testpost', (req, res) => {
-    res.send('Hi this is a post req')
 })
 
 // Error handle
