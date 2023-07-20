@@ -2,12 +2,11 @@
 const express = require('express')
 const mongoSanitize = require('express-mongo-sanitize')
 const helmet = require('helmet')
-const session = require('express-session')
+const session = require('cookie-session')
 const passport = require('passport')
 const LocalStrategy = require('passport-local').Strategy
 const cookieParser = require('cookie-parser');
 const User = require('./models/user')
-const MongoStore = require('connect-mongo');
 const cors = require('cors'); // pass reqs to the localhost:3001
 require('dotenv').config();
 
@@ -39,7 +38,7 @@ app.use(helmet({ contentSecurityPolicy: false }))
 
 // Session MiddleWare
 app.use(cookieParser());
-const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, saveUninitialized: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
+const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', resave: false, saveUninitialized: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
 app.use(session(sessionConfig))
 
 
