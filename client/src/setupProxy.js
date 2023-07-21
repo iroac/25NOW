@@ -4,7 +4,7 @@ module.exports = function (app) {
     app.use(
         '/api',
         createProxyMiddleware({
-            target: 'https://25now-api.vercel.app',
+            target: 'https://two5now-api.onrender.com',
             changeOrigin: true,
         })
     );
