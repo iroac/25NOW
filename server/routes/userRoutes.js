@@ -17,12 +17,12 @@ router.post('/register', async (req, res, next) => {
 })
 
 router.post('/login', passport.authenticate('local', { keepSessionInfo: true }), (req, res, next) => {
+    console.log('I am here')
     try {
         res.send(req.user)
     } catch (err) {
         return next(new AppError('Username or password wrong', 500))
     }
-
 })
 
 router.get('/logout', (req, res, next) => {
@@ -33,6 +33,7 @@ router.get('/logout', (req, res, next) => {
 })
 
 router.get('/getuser', (req, res, next) => {
+    console.log('I am here')
     if (!req.isAuthenticated()) {
         res.send('Is need to be signin')
     } else {

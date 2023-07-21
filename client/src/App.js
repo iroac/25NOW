@@ -13,7 +13,7 @@ function App() {
   const [doneItens, setDoneItens] = useState([])
   const [user, setUser] = useState({})
 
-  // Components states   
+  // Components states      
   const [activeIndex, setActiveIndex] = useState('')
   const [valueEditInput, setValueEditInput] = useState('')
   const [activeIndexList, setActiveIndexList] = useState('')

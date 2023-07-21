@@ -13,7 +13,7 @@ require('dotenv').config();
 
 const app = express()
 // Cors config middleware
-app.use(cors({ origin: ['https://25-now.vercel.app'], methods: ["POST", "GET"], credentials: true })) // enable cookies and sessions across domains}));
+app.use(cors({ origin: 'https://25-now.vercel.app', methods: ["POST", "GET", "PUT", "DELETE"], credentials: true })) // enable cookies and sessions across domains}));
 
 // DataBase configuration
 // Require mongoose - ORM
@@ -78,6 +78,6 @@ app.use((err, req, res, next) => {
 })
 
 // Listen port always at the end
-app.listen(5001, () => {
+app.listen(5002, () => {
     console.log("Listening on port 5000!")
 })
