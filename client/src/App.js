@@ -5,7 +5,7 @@ import EditInput from "./components/EditInput";
 import Time from "./components/Time";
 import toast, { Toaster } from 'react-hot-toast'
 import { Link, useNavigate } from "react-router-dom";
-
+axios.defaults.baseURL = 'https://two5now-api.onrender.com';
 
 function App() {
   // Aplication states 
