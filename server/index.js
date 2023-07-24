@@ -39,7 +39,7 @@ app.use(helmet({ contentSecurityPolicy: false }))
 
 // Session MiddleWare
 app.use(cookieParser());
-const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, saveUninitialized: true, cookie: { secure: true, sameSite: 'none' }, maxAge: 24 * 60 * 60 * 1000 }
+const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, saveUninitialized: true, cookie: { secure: true, sameSite: 'none', domain: '.vercel.app' }, maxAge: 24 * 60 * 60 * 1000 }
 app.use(session(sessionConfig))
 
 
