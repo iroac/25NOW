@@ -8,5 +8,15 @@
         "source": "/api/:path*/",
         "destination": "https://two5now-api.onrender.com/:path*/"
       }
-    ]
+    ], "headers": [
+        {
+          "source": "/(.*)",
+          "headers": [
+            {
+              "key": "access-control-allow-origin",
+              "value": "*"
+            }
+          ]
+        }
+      ]
   }
