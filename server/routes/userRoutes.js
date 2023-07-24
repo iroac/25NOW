@@ -19,6 +19,14 @@ router.post('/register', async (req, res, next) => {
 router.post('/login', passport.authenticate('local', { keepSessionInfo: true }), (req, res, next) => {
     try {
         res.send(req.user)
+
+        res.cookie('sessionID', req.user, {
+            secure: true, // For HTTPS connections
+            sameSite: 'none', // For cross-origin requests
+            httpOnly: true, // Recommended for security to prevent client-side access to the cookie
+            maxAge: 24 * 60 * 60 * 1000, // Set the cookie expiration time (optional)
+        });
+
     } catch (err) {
         return next(new AppError('Username or password wrong', 500))
     }
