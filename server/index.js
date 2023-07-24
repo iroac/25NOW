@@ -13,7 +13,7 @@ require('dotenv').config();
 
 const app = express()
 // Cors config middleware
-app.use(cors({ origin: ['https://25-now.vercel.app', 'https://25-now-git-master-iroac.vercel.app', 'https://25-now-iroac.vercel.app'], methods: ["POST", "GET", "PUT", "DELETE"], credentials: true })) // enable cookies and sessions across domains}));
+app.use(cors({ origin: ['https://25-now.vercel.app', 'https://25-now-git-master-iroac.vercel.app', 'https://25-now-iroac.vercel.app/login'], methods: ["POST", "GET", "PUT", "DELETE"], credentials: true })) // enable cookies and sessions across domains}));
 
 // DataBase configuration
 // Require mongoose - ORM
@@ -38,9 +38,8 @@ app.use(helmet({ contentSecurityPolicy: false }))
 
 
 // Session MiddleWare
-app.set('trust proxy', 1)
 app.use(cookieParser());
-const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, sameSite: "none", saveUninitialized: true, httpOnly: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
+const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, saveUninitialized: true, cookie: { secure: true, sameSite: 'strict', domain: '25-now.vercel.app', }, maxAge: 24 * 60 * 60 * 1000 }
 app.use(session(sessionConfig))
 
 
