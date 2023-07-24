@@ -15,13 +15,13 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
         setArchiveList(newState)
         const newList = { ...newState[listIndex] }
         delete newList.author
-        axios.put(`/api/updatetodogroup/${listId}`, newList)
+        axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listId}`, newList)
     }
 
     const handleDelete = async (id) => {
         const newList = archiveList.filter((list) => list._id !== id)
         setArchiveList(newList)
-        await axios.delete(`/api/deletetodogroup/${id}`)
+        await axios.delete(`https://two5now-api.onrender.com/api/deletetodogroup/${id}`)
         onArchivedUpdate()
     }
 
@@ -32,7 +32,7 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await axios.get('/api/todogroup')
+            const data = await axios.get('https://two5now-api.onrender.com/api/todogroup')
             setArchiveList(data.data)
         }
         document.body.classList.add('overflow-hidden');
