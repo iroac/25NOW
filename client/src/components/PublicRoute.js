@@ -8,7 +8,7 @@ function PublicRoute({ children }) {
 
     useEffect(() => {
         const fetchUser = async () => {
-            const res = await axios.get('http://localhost:3012/api/auth', { withCredentials: true })
+            const res = await axios.get('https://two5now-api.onrender.com/api/getuser', { withCredentials: true })
 
             if (res.data.username) {
                 navigate('/')
