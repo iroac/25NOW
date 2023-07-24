@@ -38,8 +38,9 @@ app.use(helmet({ contentSecurityPolicy: false }))
 
 
 // Session MiddleWare
+app.set('trust proxy', 1)
 app.use(cookieParser());
-const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, saveUninitialized: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
+const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, sameSite: "none", saveUninitialized: true, httpOnly: true, cookie: { secure: false }, maxAge: 24 * 60 * 60 * 1000 }
 app.use(session(sessionConfig))
 
 
