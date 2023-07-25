@@ -12,6 +12,7 @@ const cors = require('cors'); // pass reqs to the localhost:3001
 require('dotenv').config();
 
 const app = express()
+app.set("trust proxy", 1);
 // Cors config middleware
 app.use(cors({ origin: ['https://25-now.vercel.app', 'https://25-now-git-master-iroac.vercel.app', 'https://25-now-iroac.vercel.app', 'http://localhost:3003'], methods: ["POST", "GET", "PUT", "DELETE"], credentials: true })) // enable cookies and sessions across domains}));
 
@@ -36,10 +37,10 @@ app.use(mongoSanitize())
 app.use(helmet({ contentSecurityPolicy: false }))
 
 
-app.set("trust proxy", 1);
+
 // Session MiddleWare
 app.use(cookieParser());
-const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, saveUninitialized: true, cookie: { secure: true, sameSite: 'none', maxAge: 24 * 60 * 60 * 1000 }, maxAge: 24 * 60 * 60 * 1000 }
+const sessionConfig = { secret: 'wjdijfaWISomecrazyvaribleherefjaifaw', store: MongoStore.create({ mongoUrl: process.env.MONGODB_URL, mongooseConnection: mongoose.connection }), resave: false, saveUninitialized: true, cookie: { secure: true, sameSite: 'none' }, maxAge: 24 * 60 * 60 * 1000 }
 app.use(session(sessionConfig))
 
 
