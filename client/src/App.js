@@ -316,7 +316,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      const res = await axios.get('https://two5now-api.onrender.com/api/logout')
+      const res = await axios.get('https://two5now-api.onrender.com/api/logout', { withCredentials: true })
       toast.success(res.data)
       navigate('/login')
     } catch (err) {
