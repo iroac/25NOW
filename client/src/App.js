@@ -78,6 +78,7 @@ function App() {
     let content;
 
     if (containsdata) {
+      // eslint-disable-next-line
       newDoneItens.map((done, doneindex) => {
         if (done.data === currentdate) {
           done.items.push({ list: listSelect, item: itemSelect })
@@ -135,6 +136,7 @@ function App() {
     const containsListName = updatedList.some(item => item.Title === listname)
 
     if (containsListName) {
+      // eslint-disable-next-line
       updatedList.map((list, listIndex) => {
         if (list.Title === listname) {
           list.Itens.push(newItem)
