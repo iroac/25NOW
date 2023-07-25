@@ -12,7 +12,7 @@ function Login() {
 
     const handleSubmit = async () => {
         try {
-            const res = await axios.post('http://localhost:5002/api/login', { username, password }, { withCredentials: true })
+            const res = await axios.post('https://two5now-api.onrender.com/api/login', { username, password }, { withCredentials: true })
             if (res) {
                 navigate('/')
             }
