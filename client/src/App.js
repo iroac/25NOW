@@ -49,7 +49,7 @@ function App() {
     delete newItem.author
     setValueEditInput('')
     setClicked(false)
-    await axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listid}`, newItem)
+    await axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listid}`, newItem, { withCredentials: true })
   }
 
   const handleDone = async () => {
@@ -86,14 +86,14 @@ function App() {
           setDoneItens(content)
           const newList = content[doneindex]
           delete newList.author
-          axios.put(`https://two5now-api.onrender.com/api/updatedonetodo/${done._id}`, newList)
+          axios.put(`https://two5now-api.onrender.com/api/updatedonetodo/${done._id}`, newList, { withCredentials: true })
         }
       })
     } else {
       const newitem = { data: currentdate, items: [{ list: listSelect, item: itemSelect }] }
       content = [...newDoneItens, newitem]
       setDoneItens(content)
-      await axios.post(`https://two5now-api.onrender.com/api/newdonetodo`, newitem)
+      await axios.post(`https://two5now-api.onrender.com/api/newdonetodo`, newitem, { withCredentials: true })
       setUpdateArchived(!updateArchived)
     }
 
@@ -116,11 +116,11 @@ function App() {
     const newItem = { ...doneItens[dayindex] }
     delete newItem.author
     const listItems = doneItens[dayindex].items
-    axios.put(`https://two5now-api.onrender.com/api/updatedonetodo/${listId}`, newItem)
+    axios.put(`https://two5now-api.onrender.com/api/updatedonetodo/${listId}`, newItem, { withCredentials: true })
     if (listItems.length === 0) {
       const newList = doneItens.filter((list) => list._id !== listId)
       setDoneItens(newList)
-      axios.delete(`https://two5now-api.onrender.com/api/deletetododone/${listId}`)
+      axios.delete(`https://two5now-api.onrender.com/api/deletetododone/${listId}`, { withCredentials: true })
     }
   }
 
@@ -143,12 +143,12 @@ function App() {
           setTodoGrup(updatedList)
           const newList = todogrup[listIndex]
           delete newList.author
-          axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${list._id}`, newList)
+          axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${list._id}`, newList, { withCredentials: true })
         }
       })
     } else if (!containsListName) {
       const newList = { Title: listname, Itens: [newItem], isArchive: false }
-      const res = await axios.post('https://two5now-api.onrender.com/api/newtodogroup/', newList)
+      const res = await axios.post('https://two5now-api.onrender.com/api/newtodogroup/', newList, { withCredentials: true })
       const newGroup = [...todogrup, res.data]
       setTodoGrup(newGroup)
     }
@@ -177,7 +177,7 @@ function App() {
     delete newList.author
 
     setTodoGrup(newState)
-    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${newList._id}`, newList)
+    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${newList._id}`, newList, { withCredentials: true })
   }
 
   // Make any input width at the same size of the content
@@ -202,7 +202,7 @@ function App() {
 
     const newList = { ...todogrup[listIndex] }
     delete newList.author
-    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listid}`, newList)
+    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listid}`, newList, { withCredentials: true })
   }
 
 
@@ -224,7 +224,7 @@ function App() {
 
     const newList = { ...todogrup[listindex] }
     delete newList.author
-    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listId}`, newList)
+    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listId}`, newList, { withCredentials: true })
   }
 
 
@@ -233,7 +233,7 @@ function App() {
   const addNewList = async (listname) => {
     try {
       const newList = { Title: listname, Itens: [], isArchive: false }
-      const res = await axios.post('/api/newtodogroup', newList)
+      const res = await axios.post('/api/newtodogroup', newList, { withCredentials: true })
       const newGroup = [...todogrup, res.data]
       setTodoGrup(newGroup)
       setListClicked(false)
@@ -270,7 +270,7 @@ function App() {
           // Assing the newItem and made a put request so replace the item before with the new one.
           const newItem = { ...todogrup[listIndex] }
           delete newItem.author
-          await axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${id}`, newItem)
+          await axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${id}`, newItem, { withCredentials: true })
         }
       }
     } catch (err) {
@@ -292,7 +292,7 @@ function App() {
   const handleListDelete = (id) => {
     const newList = todogrup.filter((list) => list._id !== id)
     setTodoGrup(newList)
-    axios.delete(`https://two5now-api.onrender.com/api/deletetodogroup/${id}`)
+    axios.delete(`https://two5now-api.onrender.com/api/deletetodogroup/${id}`, { withCredentials: true })
   }
 
   // All below is refering to the data fetch and the functions to change between menus edit/add
