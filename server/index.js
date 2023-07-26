@@ -14,7 +14,7 @@ require('dotenv').config();
 const app = express()
 app.set("trust proxy", 1);
 // Cors config middleware
-app.use(cors({ origin: ['https://25-now.vercel.app', 'https://25-now-git-master-iroac.vercel.app', 'https://25-now-iroac.vercel.app', 'http://localhost:3003'], credentials: true, methods: 'GET, POST, PUT, DELETE' })) // enable cookies and sessions across domains}));
+app.use(cors({ origin: ['https://25-now.vercel.app', 'https://25-now-git-master-iroac.vercel.app', 'https://25-now-iroac.vercel.app', 'http://localhost:3003'], credentials: true, methods: 'GET, POST, PUT, DELETE', allowedHeaders: 'Content-Type, Authorization' })) // enable cookies and sessions across domains}));
 
 // DataBase configuration
 // Require mongoose - ORM
