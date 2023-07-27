@@ -12,10 +12,8 @@ exports.getAllTodos = async (req, res, next) => {
 }
 
 exports.newTodoGroup = async (req, res) => {
-    const { Title, Itens } = req.body
-    const newtodogroup = new TodoGroup({ Title: Title, Itens: Itens, isArchive: false })
-    newtodogroup.author = req.user._id;
-    console.log(newtodogroup)
+    const { Title, Itens, isArchive, author } = req.body
+    const newtodogroup = new TodoGroup({ Title, Itens, isArchive, author })
     await newtodogroup.save();
     res.send(newtodogroup)
 }
@@ -29,5 +27,6 @@ exports.deleteTodoGroup = async (req, res) => {
 
 exports.updateTodoGroup = async (req, res) => {
     const { id } = req.params
-    await TodoGroup.findByIdAndUpdate(id, { ...req.body, author: req.user._id }, { new: true })
+    console.log(req.body)
+    await TodoGroup.findByIdAndUpdate(id, { ...req.body }, { new: true })
 }

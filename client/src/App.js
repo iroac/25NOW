@@ -46,7 +46,6 @@ function App() {
     const listid = todogrup[listIndex]._id
 
     const newItem = { ...todogrup[listIndex] }
-    delete newItem.author
     setValueEditInput('')
     setClicked(false)
     await axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listid}`, newItem, { withCredentials: true })
@@ -85,7 +84,6 @@ function App() {
           content = [...newDoneItens]
           setDoneItens(content)
           const newList = content[doneindex]
-          delete newList.author
           axios.put(`https://two5now-api.onrender.com/api/updatedonetodo/${done._id}`, newList, { withCredentials: true })
         }
       })
@@ -114,7 +112,6 @@ function App() {
     setDoneItens(updateState)
 
     const newItem = { ...doneItens[dayindex] }
-    delete newItem.author
     const listItems = doneItens[dayindex].items
     axios.put(`https://two5now-api.onrender.com/api/updatedonetodo/${listId}`, newItem, { withCredentials: true })
     if (listItems.length === 0) {
@@ -142,12 +139,11 @@ function App() {
           list.Itens.push(newItem)
           setTodoGrup(updatedList)
           const newList = todogrup[listIndex]
-          delete newList.author
           axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${list._id}`, newList, { withCredentials: true })
         }
       })
     } else if (!containsListName) {
-      const newList = { Title: listname, Itens: [newItem], isArchive: false }
+      const newList = { Title: listname, Itens: [newItem], isArchive: false, author: user._id }
       const res = await axios.post('https://two5now-api.onrender.com/api/newtodogroup/', newList, { withCredentials: true })
       const newGroup = [...todogrup, res.data]
       setTodoGrup(newGroup)
@@ -174,7 +170,6 @@ function App() {
     newState[listindex] = { ...newState[listindex], Title: valueEditList }
 
     const newList = newState[listindex]
-    delete newList.author
 
     setTodoGrup(newState)
     axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${newList._id}`, newList, { withCredentials: true })
@@ -201,7 +196,6 @@ function App() {
     setTodoGrup(newState)
 
     const newList = { ...todogrup[listIndex] }
-    delete newList.author
     axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listid}`, newList, { withCredentials: true })
   }
 
@@ -223,7 +217,6 @@ function App() {
     setTodoGrup(newState)
 
     const newList = { ...todogrup[listindex] }
-    delete newList.author
     axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listId}`, newList, { withCredentials: true })
   }
 
@@ -232,8 +225,8 @@ function App() {
   // A tried a lot of stuff but It's always better looking in the function order first 
   const addNewList = async (listname) => {
     try {
-      const newList = { Title: listname, Itens: [], isArchive: false }
-      const res = await axios.post('/api/newtodogroup', newList, { withCredentials: true })
+      const newList = { Title: listname, Itens: [], isArchive: false, author: user._id }
+      const res = await axios.post('https://two5now-api.onrender.com/api/newtodogroup', newList, { withCredentials: true })
       const newGroup = [...todogrup, res.data]
       setTodoGrup(newGroup)
       setListClicked(false)
@@ -269,7 +262,6 @@ function App() {
 
           // Assing the newItem and made a put request so replace the item before with the new one.
           const newItem = { ...todogrup[listIndex] }
-          delete newItem.author
           await axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${id}`, newItem, { withCredentials: true })
         }
       }

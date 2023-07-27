@@ -8,15 +8,14 @@ exports.getAllDones = async (req, res) => {
 
 
 exports.newDone = async (req, res) => {
-    const { data, items } = req.body
-    const newItem = new DoneItem({ data: data, items: items, author: req.user._id })
+    const newItem = new DoneItem({ ...req.body })
     await newItem.save()
     res.send(newItem)
 }
 
 exports.updateDone = async (req, res) => {
     const { id } = req.params
-    await DoneItem.findByIdAndUpdate(id, { ...req.body, author: req.user._id })
+    await DoneItem.findByIdAndUpdate(id, { ...req.body })
 }
 
 
