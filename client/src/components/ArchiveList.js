@@ -14,7 +14,6 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
 
         setArchiveList(newState)
         const newList = { ...newState[listIndex] }
-        delete newList.author
         axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listId}`, newList, { withCredentials: true })
     }
 
