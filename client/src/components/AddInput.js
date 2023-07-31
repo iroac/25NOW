@@ -83,9 +83,9 @@ function AddInput({ options, add, addlist, restTime, onArchivedUpdate, doneItems
     return <div className="flex flex-row justify-center items-center mt-16 " >
         <i className={`ri-history-line text-2xl sm:text-5xl pr-2 cursor-pointer  ${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500 '}`} onClick={handleModelHistory} ></i>
         <i className={`ri-archive-line text-2xl sm:text-5xl  pr-2 cursor-pointer  ${restTime ? 'text-green-600 hover:text-green-500 ' : 'text-red-600 hover:text-red-500 '}`} onClick={handleModel} ></i>
-        <div className={`${restTime ? 'bg-green-600' : 'bg-red-600'} w-auto h-5/2  px-2 rounded-full justify-center items-center flex flex-row`}>
+        <div className={`${restTime ? 'bg-green-600' : 'bg-red-600'} w-auto h-auto  px-2 rounded-full justify-center items-center flex flex-row`}>
             {!addList && <> <form onSubmit={(e) => handleAdd(e)} ><input onChange={(e) => { setAddInput(e.target.value) }} value={addInput} className="h-8 p-auto w-auto focus:outline-0 "></input></form>
-                <Select onChange={(option) => { setSelectedOption(option) }} value={selectedOption} className=" w-auto h-2/5  focus:outline-none " styles={customStyles} options={option} placeholder="choose a group"></Select>
+                <Select onChange={(option) => { setSelectedOption(option) }} value={selectedOption} className=" w-scren h-8/12 focus:outline-none " styles={customStyles} options={option} placeholder="Groups"></Select>
                 <i className="ri-add-circle-fill cursor-pointer text-2xl sm:text-5xl text-regal-white hover:text-regal-contrast" onClick={handleAdd}></i> </>}
             {addList ? <form onSubmit={(e) => showInput(e)} > <input onChange={(e) => { setAddNewList(e.target.value) }} value={addNewList} className=" h-8 focus:outline-0"></input> </form> : ''}
             <i className="ri-folder-add-fill cursor-pointer text-2xl sm:text-5xl text-regal-white hover:text-regal-contrast" onClick={showInput}></i>

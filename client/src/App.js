@@ -388,9 +388,7 @@ function App() {
     <div className="flex flex-row justify-end items-end" > <h2 className=" pr-1" >{user.username}</h2> <Link onClick={handleLogout} className=" cursor-pointer ri-login-circle-line text-2xl text-red-600 hover:text-red-500 "></Link> </div>
     <Time itemClicked={valueEditInput} funcTimeFive={handleTimeFive} />
     <div className="flex flex-wrap pt-6 justify-center items-center ">{renderedLists}</div>
-    <div className="flex flex-row justify-center items-center w-screen " >
-      {editClicked ? <div></div> : <div > {clicked ? <EditInput onDone={handleDone} restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput doneItems={doneItens} onDeleteDone={handleDeleteDoneItem} onMoveDone={handleMoveDoneItem} onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}
-    </div>
+    {editClicked ? <div></div> : <div > {clicked ? <EditInput onDone={handleDone} restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput doneItems={doneItens} onDeleteDone={handleDeleteDoneItem} onMoveDone={handleMoveDoneItem} onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}
   </div>
 }
 
