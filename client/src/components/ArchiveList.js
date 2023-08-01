@@ -14,13 +14,13 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
 
         setArchiveList(newState)
         const newList = { ...newState[listIndex] }
-        axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listId}`, newList, { withCredentials: true })
+        axios.put(`https://25-nowapi.vercel.app/api/updatetodogroup/${listId}`, newList, { withCredentials: true })
     }
 
     const handleDelete = async (id) => {
         const newList = archiveList.filter((list) => list._id !== id)
         setArchiveList(newList)
-        await axios.delete(`https://two5now-api.onrender.com/api/deletetodogroup/${id}`, { withCredentials: true })
+        await axios.delete(`https://25-nowapi.vercel.app/api/deletetodogroup/${id}`, { withCredentials: true })
         onArchivedUpdate()
     }
 
@@ -31,7 +31,7 @@ function ArchiveList({ onClose, onArchivedUpdate, restTime }) {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await axios.get('https://two5now-api.onrender.com/api/todogroup', { withCredentials: true })
+            const data = await axios.get('https://25-nowapi.vercel.app/api/todogroup', { withCredentials: true })
             setArchiveList(data.data)
         }
         document.body.classList.add('overflow-hidden');

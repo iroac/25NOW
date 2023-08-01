@@ -2,11 +2,11 @@
     "rewrites": [
       {
         "source": "/api/:path*",
-        "destination": "https://two5now-api.onrender.com/:path*"
+        "destination": "https://25-nowapi.vercel.app/:path*"
       },
       {
         "source": "/api/:path*/",
-        "destination": "https://two5now-api.onrender.com/:path*/"
+        "destination": "https://25-nowapi.vercel.app/:path*/"
       }
     ], "headers": [
         {
