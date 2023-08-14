@@ -1,4 +1,5 @@
-## 25NOW is a dynamic and user-friendly React application that combines the functionalities of a to-do list with a Pomodoro clock. The application empowers users to efficiently manage their tasks while adhering to the Pomodoro technique for enhanced productivity. Users can create lists, add, edit, and delete items, archive completed tasks, and mark tasks as done. The application provides a comprehensive overview of completed tasks, categorized by date, enabling users to track their achievements effectively.
+## 25NOW 
+**A dynamic and user-friendly React application that combines the functionalities of a to-do list with a Pomodoro clock. The application empowers users to efficiently manage their tasks while adhering to the Pomodoro technique for enhanced productivity. Users can create lists, add, edit, and delete items, archive completed tasks, and mark tasks as done. The application provides a comprehensive overview of completed tasks, categorized by date, enabling users to track their achievements effectively.**
 
 Key Features:
 
