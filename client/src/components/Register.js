@@ -13,7 +13,7 @@ function Register() {
 
     const handleSubmit = async () => {
         try {
-            const res = await axios.post('https://25-nowapi.vercel.app/api/register', { email, username, password }, { withCredentials: true }) // enable cookies and sessions across domains
+            const res = await axios.post('https://two5now-api.onrender.com/api/register', { email, username, password }, { withCredentials: true }) // enable cookies and sessions across domains
             toast.success(res.data)
             navigate('/login')
         } catch (e) {

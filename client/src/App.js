@@ -48,7 +48,7 @@ function App() {
     const newItem = { ...todogrup[listIndex] }
     setValueEditInput('')
     setClicked(false)
-    await axios.put(`https://25-nowapi.vercel.app/api/updatetodogroup/${listid}`, newItem, { withCredentials: true })
+    await axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listid}`, newItem, { withCredentials: true })
   }
 
   const handleDone = async () => {
@@ -84,14 +84,14 @@ function App() {
           content = [...newDoneItens]
           setDoneItens(content)
           const newList = content[doneindex]
-          axios.put(`https://25-nowapi.vercel.app/api/updatedonetodo/${done._id}`, newList, { withCredentials: true })
+          axios.put(`https://two5now-api.onrender.com/api/updatedonetodo/${done._id}`, newList, { withCredentials: true })
         }
       })
     } else {
       const newitem = { data: currentdate, items: [{ list: listSelect, item: itemSelect }] }
       content = [...newDoneItens, newitem]
       setDoneItens(content)
-      await axios.post(`https://25-nowapi.vercel.app/api/newdonetodo`, newitem, { withCredentials: true })
+      await axios.post(`https://two5now-api.onrender.com/api/newdonetodo`, newitem, { withCredentials: true })
       setUpdateArchived(!updateArchived)
     }
 
@@ -113,11 +113,11 @@ function App() {
 
     const newItem = { ...doneItens[dayindex] }
     const listItems = doneItens[dayindex].items
-    axios.put(`https://25-nowapi.vercel.app/api/updatedonetodo/${listId}`, newItem, { withCredentials: true })
+    axios.put(`https://two5now-api.onrender.com/api/updatedonetodo/${listId}`, newItem, { withCredentials: true })
     if (listItems.length === 0) {
       const newList = doneItens.filter((list) => list._id !== listId)
       setDoneItens(newList)
-      axios.delete(`https://25-nowapi.vercel.app/api/deletetododone/${listId}`, { withCredentials: true })
+      axios.delete(`https://two5now-api.onrender.com/api/deletetododone/${listId}`, { withCredentials: true })
     }
   }
 
@@ -139,12 +139,12 @@ function App() {
           list.Itens.push(newItem)
           setTodoGrup(updatedList)
           const newList = todogrup[listIndex]
-          axios.put(`https://25-nowapi.vercel.app/api/updatetodogroup/${list._id}`, newList, { withCredentials: true })
+          axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${list._id}`, newList, { withCredentials: true })
         }
       })
     } else if (!containsListName) {
       const newList = { Title: listname, Itens: [newItem], isArchive: false, author: user._id }
-      const res = await axios.post('https://25-nowapi.vercel.app/api/newtodogroup/', newList, { withCredentials: true })
+      const res = await axios.post('https://two5now-api.onrender.com/api/newtodogroup/', newList, { withCredentials: true })
       const newGroup = [...todogrup, res.data]
       setTodoGrup(newGroup)
     }
@@ -172,7 +172,7 @@ function App() {
     const newList = newState[listindex]
 
     setTodoGrup(newState)
-    axios.put(`https://25-nowapi.vercel.app/api/updatetodogroup/${newList._id}`, newList, { withCredentials: true })
+    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${newList._id}`, newList, { withCredentials: true })
   }
 
   // Make any input width at the same size of the content
@@ -196,7 +196,7 @@ function App() {
     setTodoGrup(newState)
 
     const newList = { ...todogrup[listIndex] }
-    axios.put(`https://25-nowapi.vercel.app/api/updatetodogroup/${listid}`, newList, { withCredentials: true })
+    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listid}`, newList, { withCredentials: true })
   }
 
 
@@ -217,7 +217,7 @@ function App() {
     setTodoGrup(newState)
 
     const newList = { ...todogrup[listindex] }
-    axios.put(`https://25-nowapi.vercel.app/api/updatetodogroup/${listId}`, newList, { withCredentials: true })
+    axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${listId}`, newList, { withCredentials: true })
   }
 
 
@@ -226,7 +226,7 @@ function App() {
   const addNewList = async (listname) => {
     try {
       const newList = { Title: listname, Itens: [], isArchive: false, author: user._id }
-      const res = await axios.post('https://25-nowapi.vercel.app/api/newtodogroup', newList, { withCredentials: true })
+      const res = await axios.post('https://two5now-api.onrender.com/api/newtodogroup', newList, { withCredentials: true })
       const newGroup = [...todogrup, res.data]
       setTodoGrup(newGroup)
       setListClicked(false)
@@ -262,7 +262,7 @@ function App() {
 
           // Assing the newItem and made a put request so replace the item before with the new one.
           const newItem = { ...todogrup[listIndex] }
-          await axios.put(`https://25-nowapi.vercel.app/api/updatetodogroup/${id}`, newItem, { withCredentials: true })
+          await axios.put(`https://two5now-api.onrender.com/api/updatetodogroup/${id}`, newItem, { withCredentials: true })
         }
       }
     } catch (err) {
@@ -284,7 +284,7 @@ function App() {
   const handleListDelete = (id) => {
     const newList = todogrup.filter((list) => list._id !== id)
     setTodoGrup(newList)
-    axios.delete(`https://25-nowapi.vercel.app/api/deletetodogroup/${id}`, { withCredentials: true })
+    axios.delete(`https://two5now-api.onrender.com/api/deletetodogroup/${id}`, { withCredentials: true })
   }
 
   // All below is refering to the data fetch and the functions to change between menus edit/add
@@ -308,7 +308,7 @@ function App() {
 
   const handleLogout = async () => {
     try {
-      const res = await axios.get('https://25-nowapi.vercel.app/api/logout', { withCredentials: true })
+      const res = await axios.get('https://two5now-api.onrender.com/api/logout', { withCredentials: true })
       toast.success(res.data)
       navigate('/login')
     } catch (err) {
@@ -360,7 +360,7 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await axios.get('https://25-nowapi.vercel.app/api/todogroup', { withCredentials: true })
+        const data = await axios.get('https://two5now-api.onrender.com/api/todogroup', { withCredentials: true })
         setTodoGrup(data.data)
       } catch (err) {
         toast.error(err.response.data)
@@ -368,13 +368,13 @@ function App() {
     }
 
     const fetchHistory = async () => {
-      const res = await axios.get('https://25-nowapi.vercel.app/api/getdonetodo', { withCredentials: true })
+      const res = await axios.get('https://two5now-api.onrender.com/api/getdonetodo', { withCredentials: true })
       setDoneItens(res.data)
     }
 
 
     const fetchUser = async () => {
-      const res = await axios.get('https://25-nowapi.vercel.app/api/getuser', { withCredentials: true })
+      const res = await axios.get('https://two5now-api.onrender.com/api/getuser', { withCredentials: true })
       setUser(res.data)
     }
 
