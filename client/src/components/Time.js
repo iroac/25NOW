@@ -45,6 +45,7 @@ function Time({ itemClicked, funcTimeFive }) {
         setTimeFive(false)
         setTime(25 * 60);
         setPercentLeft(100)
+        funcTimeFive(false)
     };
 
     const minutes = Math.floor(time / 60);
