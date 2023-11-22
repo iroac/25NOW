@@ -385,7 +385,7 @@ function App() {
 
   return <div className="flex flex-col w-screen h-screen " >
     <Toaster position="top-center" reverseOrder={false} />
-    <div className="flex flex-row justify-end items-end" > <h2 className=" pr-1" >{user.username}</h2> <Link onClick={handleLogout} className=" cursor-pointer ri-login-circle-line text-2xl text-red-600 hover:text-red-500 "></Link> </div>
+    <div className="flex flex-row justify-end items-end" > <h2 className=" pr-1" >{user.username}</h2> <Link onClick={handleLogout} className={`cursor-pointer ri-login-circle-line text-2xl  ${restTime ? 'text-green-600 hover:text-green-500' : 'text-red-600 hover:text-red-500'} `}></Link> </div>
     <Time itemClicked={valueEditInput} funcTimeFive={handleTimeFive} />
     <div className="flex flex-wrap pt-6 justify-center items-center ">{renderedLists}</div>
     {editClicked ? <div></div> : <div > {clicked ? <EditInput onDone={handleDone} restTime={restTime} onEdit={handleEditInput} deleteI={deleteItem} clicked={handleMenuClick} /> : <AddInput doneItems={doneItens} onDeleteDone={handleDeleteDoneItem} onMoveDone={handleMoveDoneItem} onArchivedUpdate={handleUpdateArchived} restTime={restTime} addlist={addNewList} add={addItem} options={optionsList} />} </div>}
