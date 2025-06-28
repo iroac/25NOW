@@ -11,7 +11,9 @@
 		"allowSyntheticDefaultImports": true,
 		"moduleResolution": "node",
 		"preserveConstEnums": true,
-		"sourceMap": true
+		"sourceMap": true,
+		"rootDir": "src",
+		"outDir": "dist"
 	},
 	"include": ["src/**/*"],
 	"exclude": ["**/*.spec.ts"]
