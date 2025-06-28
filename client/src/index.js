@@ -30,8 +30,7 @@ const router = createBrowserRouter([
 		path: "/register",
 		element: (
 			<PublicRoute>
-				{" "}
-				<SignupScreen />{" "}
+				<SignupScreen />
 			</PublicRoute>
 		),
 	},

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import AddInput from "../AddInput";
-import EditInput from "../EditInput";
-import Time from "../Time";
 import toast, { Toaster } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../services/axios-config";
+import Time from "../Time";
+import ActionMenu from "./ui/action-menu";
 
 function App() {
 	// Aplication states
@@ -504,31 +503,24 @@ function App() {
 			<div className="flex flex-wrap pt-6 justify-center items-center ">
 				{renderedLists}
 			</div>
-			{editClicked ? (
-				<></>
-			) : (
+
+			{!editClicked && (
 				<div>
-					{" "}
-					{clicked ? (
-						<EditInput
-							onDone={handleDone}
-							restTime={restTime}
-							onEdit={handleEditInput}
-							deleteI={deleteItem}
-							clicked={handleMenuClick}
-						/>
-					) : (
-						<AddInput
-							doneItems={doneItens}
-							onDeleteDone={handleDeleteDoneItem}
-							onMoveDone={handleMoveDoneItem}
-							onArchivedUpdate={handleUpdateArchived}
-							restTime={restTime}
-							addlist={addNewList}
-							add={addItem}
-							options={optionsList}
-						/>
-					)}{" "}
+					<ActionMenu
+						isEdit={clicked}
+						onDone={handleDone}
+						restTime={restTime}
+						onEdit={handleEditInput}
+						deleteI={deleteItem}
+						clicked={handleMenuClick}
+						doneItems={doneItens}
+						onDeleteDone={handleDeleteDoneItem}
+						onMoveDone={handleMoveDoneItem}
+						onArchivedUpdate={handleUpdateArchived}
+						addlist={addNewList}
+						add={addItem}
+						options={optionsList}
+					/>
 				</div>
 			)}
 		</div>
