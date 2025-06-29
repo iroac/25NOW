@@ -1,20 +1,22 @@
 import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
+import type { DoneItems, TodoGroup } from "../../models/todo";
+import type { User } from "../../models/user";
 import { api } from "../../services/axios-config";
 import Time from "../Time";
 import ActionMenu from "./ui/action-menu";
 
 function App() {
 	// Aplication states
-	const [todogrup, setTodoGrup] = useState([]);
-	const [doneItens, setDoneItens] = useState([]);
-	const [user, setUser] = useState({});
+	const [todogroup, setTodoGroup] = useState<TodoGroup[]>();
+	const [doneItens, setDoneItens] = useState<DoneItems[]>([]);
+	const [user, setUser] = useState<User>({ _id: "", username: "" });
 
 	// Components states
 	const [activeIndex, setActiveIndex] = useState("");
 	const [valueEditInput, setValueEditInput] = useState("");
-	const [activeIndexList, setActiveIndexList] = useState("");
+	const [activeIndexList, setActiveIndexList] = useState<number>();
 	const [valueEditList, setValueEditList] = useState("");
 
 	// Boolean states - Components states
@@ -27,7 +29,7 @@ function App() {
 
 	const navigate = useNavigate();
 
-	const handleTimeFive = (TimeFive) => {
+	const handleTimeFive = (TimeFive: boolean) => {
 		setRestTime(TimeFive);
 	};
 
@@ -35,13 +37,13 @@ function App() {
 		const itemIndex = +activeIndex[3];
 		const listIndex = +activeIndex[0];
 
-		const updatedGroup = [...todogrup];
+		const updatedGroup = [...todogroup];
 		updatedGroup[listIndex].Itens.splice(itemIndex, 1);
 
-		setTodoGrup(updatedGroup);
-		const listid = todogrup[listIndex]._id;
+		setTodoGroup(updatedGroup);
+		const listid = todogroup[listIndex]._id;
 
-		const newItem = { ...todogrup[listIndex] };
+		const newItem = { ...todogroup[listIndex] };
 		setValueEditInput("");
 		setClicked(false);
 		await api.put(`api/updatetodogroup/${listid}`, newItem, {
@@ -61,26 +63,23 @@ function App() {
 		const year = date.getFullYear();
 		const currentdate = `${day} ${month} ${year}`;
 
-		// Item Select
-		const newState = [...todogrup];
+		const newState = [...todogroup];
 		const itemSelect = newState[listIndex].Itens[itemIndex];
 		const listSelect = newState[listIndex].Title;
 
-		// doneItens Copy
 		const newDoneItens = [...doneItens];
 		const data = newDoneItens.map((done) => done.data);
 		const containsdata = data.some((item) => item === currentdate);
-		let content;
+		let content: DoneItems[];
 
 		if (containsdata) {
-			// eslint-disable-next-line
-			newDoneItens.map((done, doneindex) => {
+			newDoneItens.map(async (done, doneindex) => {
 				if (done.data === currentdate) {
 					done.items.push({ list: listSelect, item: itemSelect });
 					content = [...newDoneItens];
 					setDoneItens(content);
 					const newList = content[doneindex];
-					api.put(`api/updatedonetodo/${done._id}`, newList, {
+					await api.put(`api/updatedonetodo/${done._id}`, newList, {
 						withCredentials: true,
 					});
 				}
@@ -100,146 +99,78 @@ function App() {
 		deleteItem();
 	};
 
-	const handleDeleteDoneItem = async (index) => {
-		const itemindex = +index[3];
-		const dayindex = +index[0];
-
-		const updateState = [...doneItens];
-		updateState[dayindex].items.splice(itemindex, 1);
-
-		const listId = updateState[dayindex]._id;
-
-		setDoneItens(updateState);
-
-		const newItem = { ...doneItens[dayindex] };
-		const listItems = doneItens[dayindex].items;
-		api.put(`api/updatedonetodo/${listId}`, newItem, { withCredentials: true });
-		if (listItems.length === 0) {
-			const newList = doneItens.filter((list) => list._id !== listId);
-			setDoneItens(newList);
-			api.delete(`api/deletetododone/${listId}`, { withCredentials: true });
-		}
-	};
-
-	const handleMoveDoneItem = async (index) => {
-		const itemindex = +index[3];
-		const dayindex = +index[0];
-
-		const newState = [...doneItens];
-		const newItem = newState[dayindex].items[itemindex].item;
-		const listname = newState[dayindex].items[itemindex].list;
-
-		const updatedList = [...todogrup];
-		const containsListName = updatedList.some(
-			(item) => item.Title === listname,
-		);
-
-		if (containsListName) {
-			// eslint-disable-next-line
-			updatedList.map((list, listIndex) => {
-				if (list.Title === listname) {
-					list.Itens.push(newItem);
-					setTodoGrup(updatedList);
-					const newList = todogrup[listIndex];
-					api.put(`api/updatetodogroup/${list._id}`, newList, {
-						withCredentials: true,
-					});
-				}
-			});
-		} else if (!containsListName) {
-			const newList = {
-				Title: listname,
-				Itens: [newItem],
-				isArchive: false,
-				author: user._id,
-			};
-			const res = await api.post("api/newtodogroup/", newList, {
-				withCredentials: true,
-			});
-			const newGroup = [...todogrup, res.data];
-			setTodoGrup(newGroup);
-		}
-
-		handleDeleteDoneItem(index);
-	};
-
 	const handleUpdateArchived = () => {
 		setUpdateArchived(!updateArchived);
 	};
 
-	// Handle to show the Input field and set the value as the currently item name. it just can be accomplished with the defaultvalue set as the item on the input field
 	const handleEditInput = () => {
 		setEditClicked(true);
 	};
 
-	// Update the ListName
-	const handleListNameUpdate = (e, listindex) => {
+	const handleListNameUpdate = (
+		e: React.FormEvent<HTMLFormElement>,
+		listindex: number,
+	) => {
 		e.preventDefault();
 		setEditClickedList(false);
-		const newState = [...todogrup];
+		const newState = [...todogroup];
 		newState[listindex] = { ...newState[listindex], Title: valueEditList };
 
 		const newList = newState[listindex];
 
-		setTodoGrup(newState);
+		setTodoGroup(newState);
 		api.put(`api/updatetodogroup/${newList._id}`, newList, {
 			withCredentials: true,
 		});
 	};
 
-	// Make any input width at the same size of the content
-	const handleWidthInput = (e) => {
+	const handleWidthInput = (e: React.FocusEvent<HTMLInputElement, Element>) => {
 		const input = e.target;
 		input.style.width = `${input.value.length}ch`;
 	};
 
-	// Handle to make the set the valuedefaul when click and make the defaultValue width at the same size of the input
-	const handleFocus = (e, Title) => {
+	const handleFocus = (e: React.FocusEvent<HTMLInputElement, Element>) => {
 		const input = e.target;
 		input.style.width = `${input.value.length}ch`;
 	};
 
-	const handleArchive = (listIndex) => {
-		const newState = [...todogrup];
+	const handleArchive = (listIndex: number) => {
+		const newState = [...todogroup];
 		newState[listIndex].isArchive = true;
 
 		const listid = newState[listIndex]._id;
 
-		setTodoGrup(newState);
+		setTodoGroup(newState);
 
-		const newList = { ...todogrup[listIndex] };
+		const newList = { ...todogroup[listIndex] };
 		api.put(`api/updatetodogroup/${listid}`, newList, {
 			withCredentials: true,
 		});
 	};
 
-	// Hey boy, what a jorney, it was intense but rewarding, the first config was made the editClicked status so we can change between the input and the h2 the represents each item
-	// Then I styled currectly so it appears to be just a plain text, was a pain but I found out that we need the valuedefault to put the item as the inicial value
-	// after I passed the same thing and then discovered the we need the autoFocus to put the | on the end when click no need to the user select the text and find where they want to start editing
-	// Then on submit is not available on the input field so I embedded it with a form so onSubmit calls the handleUpdateItem and from there we can make everything happen
-	// Also we assign the currently value of the input with a state so we can acess it with that function.
-	// handleUpdateItem has 3 props (event, itemIndex, listIndex ) with this is possible to assign the right modification, I won't explain this, just look for your self to see the steps
-	const handleUpdateItem = (e, index, listindex) => {
+	const handleUpdateItem = (
+		e: React.FormEvent<HTMLFormElement>,
+		index: number,
+		listindex: number,
+	) => {
 		e.preventDefault();
 		setEditClicked(false);
-		const newState = [...todogrup];
+		const newState = [...todogroup];
 		newState[listindex].Itens.splice(index, 1, valueEditInput);
 
 		const listId = newState[listindex]._id;
 
-		setTodoGrup(newState);
+		setTodoGroup(newState);
 
-		const newList = { ...todogrup[listindex] };
+		const newList = { ...todogroup[listindex] };
 		api.put(`api/updatetodogroup/${listId}`, newList, {
 			withCredentials: true,
 		});
 	};
 
-	// A spend some time trying to figure why after create the put request to addItem was not working and finally found out that was the order of this function
-	// A tried a lot of stuff but It's always better looking in the function order first
-	const addNewList = async (listname) => {
+	const addNewList = async (listname: string) => {
 		try {
-			const newList = {
+			const newList: TodoGroup = {
 				Title: listname,
 				Itens: [],
 				isArchive: false,
@@ -248,29 +179,19 @@ function App() {
 			const res = await api.post("api/newtodogroup", newList, {
 				withCredentials: true,
 			});
-			const newGroup = [...todogrup, res.data];
-			setTodoGrup(newGroup);
+			const newGroup = [...todogroup, res.data];
+			setTodoGroup(newGroup);
 			setListClicked(false);
 		} catch (err) {
 			toast.error(err.response.data);
 		}
 	};
 
-	// I just pass most time of my day (02/28) to make this code. I was hard because at first I think
-	// "I will have to add a item on an array inside an object on a database with multiples obj"
-	// I tried use the Title inicialy to acess that with the .findIndex obj method, but I forgot that every element on the json got have an id, so after a long time a notice it and put it.
-	// So then I tried to change the second paramet of addItem for the id, for this when we create the option list the value will be assign to the id,
-	// when we require that on select so here we use it to acess the id. after find the index with findIndex(this time it works cause I'm compare with the id not with index like I did first)
-	// Then we create a new varible and assign that to the todogrup so we'll not modify the status. I know't how but if we not do this the renderTodo apresents a error that can map. So I guess that state has to stay aways clean in all modification.
-	// so we push the item to the varible and set the TodoGrup for it, create a varible the represent the currently obj to be modified and put that as the second argument on the api.put as know as payload.
-	const addItem = async (item, id) => {
+	const addItem = async (item: string, id: string) => {
 		try {
-			// Find the list id by the index
-			const listIndex = todogrup.findIndex((list) => list._id === id);
+			const listIndex = todogroup.findIndex((list) => list._id === id);
 
-			// Assign newState as a copy of todogrup so we can modify it
-			const newState = [...todogrup];
-			// Push the item to the right place
+			const newState = [...todogroup];
 			if (!newState[listIndex]) {
 				toast.error("Please select a list");
 			} else {
@@ -280,11 +201,9 @@ function App() {
 					);
 				} else {
 					newState[listIndex].Itens.push(item);
-					// Seting the todoGrup as the newState
-					setTodoGrup(newState);
+					setTodoGroup(newState);
 
-					// Assing the newItem and made a put request so replace the item before with the new one.
-					const newItem = { ...todogrup[listIndex] };
+					const newItem = { ...todogroup[listIndex] };
 					await api.put(`api/updatetodogroup/${id}`, newItem, {
 						withCredentials: true,
 					});
@@ -295,36 +214,39 @@ function App() {
 		}
 	};
 
-	// Set the currently clicked index and show set the listclicked to true so shows the icon
-	const handleListDeleteButton = (index, e) => {
+	const handleListDeleteButton = (
+		index: number,
+		e:
+			| React.MouseEvent<HTMLDivElement>
+			| React.KeyboardEvent<HTMLHeadingElement>,
+	) => {
 		setListClicked(!listclicked);
 		setActiveIndexList(index);
 		setEditClickedList(false);
-		setValueEditList(e.target.innerText);
+		setValueEditList(e.currentTarget.innerText);
 	};
 
-	// Handle the List Delete using a filter method
-	const handleListDelete = (id) => {
-		const newList = todogrup.filter((list) => list._id !== id);
-		setTodoGrup(newList);
+	const handleListDelete = (id: string) => {
+		const newList = todogroup.filter((list) => list._id !== id);
+		setTodoGroup(newList);
 		api.delete(`api/deletetodogroup/${id}`, {
 			withCredentials: true,
 		});
 	};
 
-	// All below is refering to the data fetch and the functions to change between menus edit/add
-
-	// Set the current item index that was clicked, with the index list and index item so just active the item to red
-	// Set the cliked state so the menus can change between then
-	const handleClick = (index, e) => {
+	const handleClick = (
+		index: string,
+		e:
+			| React.MouseEvent<HTMLDivElement>
+			| React.KeyboardEvent<HTMLHeadingElement>,
+	) => {
 		setActiveIndex(index);
 		setClicked(true);
 		setEditClicked(false);
 		setListClicked(false);
-		setValueEditInput(e.target.innerText);
+		setValueEditInput(e.currentTarget.innerText);
 	};
 
-	// A function that goes to Editinput as a props so when click on add we change to AddInput and unselect any active item
 	const handleMenuClick = () => {
 		setClicked(false);
 		setActiveIndex("");
@@ -342,14 +264,14 @@ function App() {
 	};
 
 	// Maps to handle with the fetch to display currectly
-	const renderedLists = todogrup.map((data, listindex) => {
+	const renderedLists = (todogroup || [])?.map((data, listindex) => {
 		if (!data.isArchive) {
 			const items = data.Itens;
 			const rendereditems = items.map((item, i) => {
 				const twoindex = `${listindex}, ${i}`;
-				let content;
-				if (editClicked & (twoindex === activeIndex)) {
-					content = (
+
+				if (editClicked && twoindex === activeIndex) {
+					return (
 						<form
 							key={`${i}${item}`}
 							onSubmit={(e) => handleUpdateItem(e, i, listindex)}
@@ -367,27 +289,26 @@ function App() {
 							/>{" "}
 						</form>
 					);
-				} else {
-					content = (
-						<h2
-							onClick={(e) => handleClick(twoindex, e)}
-							onKeyDown={(e) =>
-								e.key === "Enter" ? handleClick(twoindex, e) : ""
-							}
-							key={`${i}${item}`}
-							className={`text-lg cursor-pointer ${twoindex === activeIndex ? (restTime ? "text-green-500" : "text-red-500") : ""}`}
-						>
-							{item}
-						</h2>
-					);
 				}
-				return content;
+
+				return (
+					<h2
+						onClick={(e) => handleClick(twoindex, e)}
+						onKeyDown={(e) =>
+							e.key === "Enter" ? handleClick(twoindex, e) : ""
+						}
+						key={`${i}${item}`}
+						className={`text-lg cursor-pointer ${twoindex === activeIndex ? (restTime ? "text-green-500" : "text-red-500") : ""}`}
+					>
+						{item}
+					</h2>
+				);
 			});
 
 			return (
 				<div key={data.Title} className="text-left px-10 pt-10">
 					<div className="flex flex-row">
-						{editClikedList & (listindex === activeIndexList) ? (
+						{editClikedList && listindex === activeIndexList ? (
 							<form
 								key={`${listindex}${data.Title}`}
 								onSubmit={(e) => handleListNameUpdate(e, listindex)}
@@ -415,7 +336,7 @@ function App() {
 								{data.Title}
 							</h1>
 						)}
-						{listclicked & (listindex === activeIndexList) & !editClikedList ? (
+						{listclicked && listindex === activeIndexList && !editClikedList ? (
 							<div>
 								<i
 									className={`ri-edit-2-line ml-1 text-2xl   ${restTime ? "text-green-600" : "text-red-600"} `}
@@ -452,14 +373,6 @@ function App() {
 		return "";
 	});
 
-	// A map that take the Title to put on the selection as options at AddInput
-	const optionsList = todogrup.map((todo) => {
-		if (!todo.isArchive) {
-			return { value: todo._id, label: todo.Title };
-		}
-		return { value: undefined, label: undefined };
-	});
-
 	// A fetch to take all list and itens from the database
 	useEffect(() => {
 		const fetchData = async () => {
@@ -467,7 +380,7 @@ function App() {
 				const data = await api.get("api/todogroup", {
 					withCredentials: true,
 				});
-				setTodoGrup(data.data);
+				setTodoGroup(data.data);
 			} catch (err) {
 				toast.error(err.response.data);
 			}
@@ -492,34 +405,40 @@ function App() {
 		<div className="flex flex-col w-screen h-screen ">
 			<Toaster position="top-center" reverseOrder={false} />
 			<div className="flex flex-row justify-end items-end">
-				{" "}
-				<h2 className=" pr-1">{user.username}</h2>{" "}
+				<h2 className=" pr-1">{user.username}</h2>
 				<Link
 					onClick={handleLogout}
 					className={`cursor-pointer ri-login-circle-line text-2xl  ${restTime ? "text-green-600 hover:text-green-500" : "text-red-600 hover:text-red-500"} `}
-				/>{" "}
+					to={""}
+				/>
 			</div>
 			<Time itemClicked={valueEditInput} funcTimeFive={handleTimeFive} />
 			<div className="flex flex-wrap pt-6 justify-center items-center ">
 				{renderedLists}
 			</div>
-
-			{!editClicked && (
+			{editClicked ? (
+				<></>
+			) : (
 				<div>
 					<ActionMenu
-						isEdit={clicked}
 						onDone={handleDone}
 						restTime={restTime}
 						onEdit={handleEditInput}
 						deleteI={deleteItem}
 						clicked={handleMenuClick}
-						doneItems={doneItens}
-						onDeleteDone={handleDeleteDoneItem}
-						onMoveDone={handleMoveDoneItem}
-						onArchivedUpdate={handleUpdateArchived}
+						isEdit={clicked}
+						setDoneItens={setDoneItens}
+						doneItens={doneItens}
+						user={user}
 						addlist={addNewList}
-						add={addItem}
-						options={optionsList}
+						todogroup={todogroup}
+						handleDone={handleDone}
+						handleEditInput={handleEditInput}
+						deleteItem={deleteItem}
+						handleMenuClick={handleMenuClick}
+						handleUpdateArchived={handleUpdateArchived}
+						addItem={addItem}
+						setTodoGroup={setTodoGroup}
 					/>
 				</div>
 			)}
